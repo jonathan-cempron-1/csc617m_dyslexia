@@ -28,6 +28,7 @@ public class FrmDislexia extends javax.swing.JFrame {
         jTabbedPane2.addTab("scanner", icon, new PnlScanner(), "scanner");
         jTabbedPane2.addTab("parser", icon, new PnlParser(), "parser");
         jTabbedPane2.addTab("tac", icon, pnlTac, "tac");
+        this.setResizable(false);
         this.setVisible(true);
     }
 

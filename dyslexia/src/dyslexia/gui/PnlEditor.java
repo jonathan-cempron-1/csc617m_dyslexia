@@ -11,6 +11,7 @@ import dyslexia.grammar.DyslexiaAnnotatedListenerTac;
 import dyslexia.grammar.DyslexiaEvaluator;
 import dyslexia.grammar.DyslexiaLexer;
 import dyslexia.grammar.DyslexiaParser;
+import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -29,11 +30,15 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import org.fife.ui.rtextarea.*;
+import org.fife.ui.rsyntaxtextarea.*;
+
 /**
  *
  * @author jonats
  */
 public class PnlEditor extends javax.swing.JPanel {
+    RSyntaxTextArea jTextPane1 = new RSyntaxTextArea(20, 60);
     private JTabbedPane jTabbedPane1;
     private JScrollPane pnlTree;
     private PnlConsole pnlConsole;
@@ -49,6 +54,13 @@ public class PnlEditor extends javax.swing.JPanel {
         this.pnlConsole = pnlConsole;
         this.frmDislexia = frmDislexia;
         this.pnlTac = pnlTac;
+        
+        jTextPane1.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+        jTextPane1.setCodeFoldingEnabled(true);
+        RTextScrollPane sp = new RTextScrollPane(jTextPane1);
+        //sp.setBounds(10, 10, 200, 200);
+        sp.setBounds(10, 10, 960, 345);
+        this.add(sp, BorderLayout.CENTER);
     }
 
     /**
@@ -60,12 +72,8 @@ public class PnlEditor extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-
-        jScrollPane1.setViewportView(jTextPane1);
 
         jButton1.setText("compile and run");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -87,21 +95,15 @@ public class PnlEditor extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)
-                        .addGap(0, 196, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addComponent(jButton2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addContainerGap(208, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap(261, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -245,7 +247,5 @@ public class PnlEditor extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
 }
