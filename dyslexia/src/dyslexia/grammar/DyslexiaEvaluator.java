@@ -615,6 +615,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         return values; 
     }
     
+    // Loops
     // whileStatement
     @Override public ArrayList<Value> visitWhileStatement(DyslexiaParser.WhileStatementContext ctx) { 
         ArrayList<Value> values = new ArrayList<>(); 
@@ -644,6 +645,65 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         }
         return null;
     }
+    
+    // doStatement
+    @Override public ArrayList<Value> visitDoStatement(DyslexiaParser.DoStatementContext ctx) { 
+        ArrayList<Value> values = new ArrayList<>(); 
+        ArrayList<Value> expressions;
+        Value expression;
+        
+        do {
+            // do statements first
+            visit(ctx.statement());
+            
+            // then get the expression
+            expressions = visit(ctx.expression());
+            expression = expressions.get(0);
+            
+            // check if expression is a variable
+            if ( "variable".equals(expression.getType()) ) {
+                Symbol symbol = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
+                expression = new Value(symbol.getType(), symbol.getSingleValue() );
+            }
+        } while( "boolean".equals(expression.getType()) && ( true == expression.getBooleanValue() ) );
+        
+        return null;
+    }
+    
+    // basicForStatement
+    @Override public ArrayList<Value> visitBasicForStatement(DyslexiaParser.BasicForStatementContext ctx) { 
+        ArrayList<Value> values = new ArrayList<>();
+        ArrayList<Value> expressions;
+        Value expression;
+        
+        // initialization
+        visit(ctx.forInit());
+        
+        // visit expression
+        expressions = visit(ctx.expression());
+        expression = expressions.get(0);
+        
+        while( "boolean".equals(expression.getType()) && ( true == expression.getBooleanValue() ) ){
+            // visit the statements inside
+            visit(ctx.statement());
+            
+            // update
+            visit(ctx.forUpdate());
+            
+            // check again if expression has changed
+            expressions = visit(ctx.expression());
+            expression = expressions.get(0);
+            
+            // check if expression is a variable
+            if ( "variable".equals(expression.getType()) ) {
+                Symbol symbol = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
+                expression = new Value(symbol.getType(), symbol.getSingleValue() );
+            }
+        }
+        
+        return null; 
+    }
+    
     // Math Expressions
     // additiveExpression_add
     @Override public ArrayList<Value> visitAdditiveExpression_add(DyslexiaParser.AdditiveExpression_addContext ctx) { 
