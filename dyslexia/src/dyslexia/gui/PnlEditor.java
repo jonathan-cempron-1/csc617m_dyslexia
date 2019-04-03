@@ -13,7 +13,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -28,6 +30,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import org.fife.ui.rtextarea.*;
 import org.fife.ui.rsyntaxtextarea.*;
+import org.fife.ui.autocomplete.*;
 
 /**
  *
@@ -42,6 +45,7 @@ public class PnlEditor extends javax.swing.JPanel {
     private PnlTac pnlTac;
     private PnlParser pnlParser;
     private PnlSemantic pnlSemantic;
+    private DefaultCompletionProvider completionProvider = new DefaultCompletionProvider();
     
     /**
      * Creates new form PnlEditor
@@ -58,11 +62,127 @@ public class PnlEditor extends javax.swing.JPanel {
         jTextPane1.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         jTextPane1.setCodeFoldingEnabled(true);
         RTextScrollPane sp = new RTextScrollPane(jTextPane1);
+        
+        // A CompletionProvider is what knows of all possible completions, and
+        // analyzes the contents of the text area at the caret position to
+        // determine what completion choices should be presented. Most instances
+        // of CompletionProvider (such as DefaultCompletionProvider) are designed
+        // so that they can be shared among multiple text components.
+        CompletionProvider provider = createCompletionProvider();
+
+        // An AutoCompletion acts as a "middle-man" between a text component
+        // and a CompletionProvider. It manages any options associated with
+        // the auto-completion (the popup trigger key, whether to display a
+        // documentation window along with completion choices, etc.). Unlike
+        // CompletionProviders, instances of AutoCompletion cannot be shared
+        // among multiple text components.
+        AutoCompletion ac = new AutoCompletion(provider);
+        ac.install(jTextPane1);
+        
         //sp.setBounds(10, 10, 200, 200);
         sp.setBounds(10, 10, 960, 345);
         this.add(sp, BorderLayout.CENTER);
     }
+    
+    public void addCompletion(String text){
+        completionProvider.addCompletion(new BasicCompletion(completionProvider, text));
+        AutoCompletion ac = new AutoCompletion(completionProvider);
+        ac.install(jTextPane1);
+    }
 
+   /**
+    * Create a simple provider that adds some Java-related completions.
+    */
+   private CompletionProvider createCompletionProvider() {
+
+      // A DefaultCompletionProvider is the simplest concrete implementation
+      // of CompletionProvider. This provider has no understanding of
+      // language semantics. It simply checks the text entered up to the
+      // caret position for a match against known completions. This is all
+      // that is needed in the majority of cases.
+      /*
+      DefaultCompletionProvider provider = new DefaultCompletionProvider();
+
+      // Add completions for all Java keywords. A BasicCompletion is just
+      // a straightforward word completion.
+      provider.addCompletion(new BasicCompletion(provider, "abstract"));
+      provider.addCompletion(new BasicCompletion(provider, "assert"));
+      provider.addCompletion(new BasicCompletion(provider, "break"));
+      provider.addCompletion(new BasicCompletion(provider, "case"));
+      // ... etc ...
+      provider.addCompletion(new BasicCompletion(provider, "transient"));
+      provider.addCompletion(new BasicCompletion(provider, "transientasdasd"));
+      provider.addCompletion(new BasicCompletion(provider, "try"));
+      provider.addCompletion(new BasicCompletion(provider, "void"));
+      provider.addCompletion(new BasicCompletion(provider, "volatile"));
+      provider.addCompletion(new BasicCompletion(provider, "while"));
+
+      // Add a couple of "shorthand" completions. These completions don't
+      // require the input text to be the same thing as the replacement text.
+      provider.addCompletion(new ShorthandCompletion(provider, "sysout",
+            "System.out.println(", "System.out.println("));
+      provider.addCompletion(new ShorthandCompletion(provider, "syserr",
+            "System.err.println(", "System.err.println("));
+
+      return provider;
+      */
+      String[] initlist = {"tcartsba",
+                        "tressa",
+                        "naeloob",
+                        "kaerb",
+                        "etyb",
+                        "esac",
+                        "hctac",
+                        "rahc",
+                        "ssalc",
+                        "tsnoc",
+                        "eunitnoc",
+                        "tluafed",
+                        "od",
+                        "elbuod",
+                        "esle",
+                        "mune",
+                        "sdnetxe",
+                        "lanif",
+                        "yllanif",
+                        "taolf",
+                        "rof",
+                        "fi",
+                        "otog",
+                        "stnemelpmi",
+                        "tropmi",
+                        "foecnatsni",
+                        "tni",
+                        "ecafretni",
+                        "gnol",
+                        "evitan",
+                        "wen",
+                        "egakcap",
+                        "etavirp",
+                        "detcetorp",
+                        "cilbup",
+                        "nruter",
+                        "trohs",
+                        "citats",
+                        "pftcirts",
+                        "repus",
+                        "hctiws",
+                        "dezinorhcnys",
+                        "siht",
+                        "worht",
+                        "sworht",
+                        "tneisnart",
+                        "yrt",
+                        "diov",
+                        "elitalov",
+                        "elihw"};
+      for(int i = 0; i < initlist.length; i++){
+          completionProvider.addCompletion(new BasicCompletion(completionProvider, initlist[i]));
+      }
+      return completionProvider;
+
+   }    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -74,6 +194,7 @@ public class PnlEditor extends javax.swing.JPanel {
 
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         jButton1.setText("compile and run");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -89,6 +210,13 @@ public class PnlEditor extends javax.swing.JPanel {
             }
         });
 
+        jButton3.setText("init basic code template");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -98,7 +226,9 @@ public class PnlEditor extends javax.swing.JPanel {
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
-                .addContainerGap(208, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton3)
+                .addContainerGap(47, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -106,7 +236,8 @@ public class PnlEditor extends javax.swing.JPanel {
                 .addContainerGap(261, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -268,12 +399,126 @@ public class PnlEditor extends javax.swing.JPanel {
             }            
             //
             jTextPane1.setText(content);
+            
+            content = content.replaceAll(";", " ");
+            content = content.replaceAll("\\{", " ");
+            content = content.replaceAll("}", " ");
+            content = content.replaceAll("\\[", " ");
+            content = content.replaceAll("]", " ");
+            content = content.replaceAll("\\(", " ");
+            content = content.replaceAll("\\)", " ");
+            //content = content.replaceAll("\"", " ");
+            //content = content.replaceAll("\'", " ");
+            //content = content.replaceAll("\\+", "");
+            //content = content.replaceAll("=", " ");
+            //content = content.replaceAll("-", " ");
+            //content = content.replaceAll("\\*", " ");
+            //content = content.replaceAll("/", " ");
+            //content = content.replaceAll("\\.", " ");
+            //content = content.replaceAll(",", " ");
+            //content = content.replaceAll("<", " ");
+            //content = content.replaceAll(">", " ");
+            //content = content.replaceAll("!", " ");
+            //content = content.replaceAll("%", " ");
+            //content = content.replaceAll("&", " ");
+            //content = content.replaceAll("|", " ");
+            //content = content.replaceAll("\\?", " ");
+            //content = content.replaceAll("^", " ");
+            String[] splitcontent = content.split("\\s+");
+            /*
+            for(int i = 0; i < splitcontent.length; i++){
+                addCompletion(splitcontent[i]);
+                System.out.println(splitcontent[i]);
+            }
+            */
+            List<String> list = Arrays.asList(splitcontent);
+            Set<String> set = new HashSet<String>(list);
+
+            String[] reslt = new String[set.size()];
+            set.toArray(reslt);
+            for (String s : reslt)
+              if(notInKey(s))
+                addCompletion(s);
         }
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private boolean notInKey(String s){
+              String[] initlist = {"tcartsba",
+                        "tressa",
+                        "naeloob",
+                        "kaerb",
+                        "etyb",
+                        "esac",
+                        "hctac",
+                        "rahc",
+                        "ssalc",
+                        "tsnoc",
+                        "eunitnoc",
+                        "tluafed",
+                        "od",
+                        "elbuod",
+                        "esle",
+                        "mune",
+                        "sdnetxe",
+                        "lanif",
+                        "yllanif",
+                        "taolf",
+                        "rof",
+                        "fi",
+                        "otog",
+                        "stnemelpmi",
+                        "tropmi",
+                        "foecnatsni",
+                        "tni",
+                        "ecafretni",
+                        "gnol",
+                        "evitan",
+                        "wen",
+                        "egakcap",
+                        "etavirp",
+                        "detcetorp",
+                        "cilbup",
+                        "nruter",
+                        "trohs",
+                        "citats",
+                        "pftcirts",
+                        "repus",
+                        "hctiws",
+                        "dezinorhcnys",
+                        "siht",
+                        "worht",
+                        "sworht",
+                        "tneisnart",
+                        "yrt",
+                        "diov",
+                        "elitalov",
+                        "elihw"};
+        for(int i = 0; i < initlist.length; i++)
+            if(initlist[i].equals(s))
+                return false;
+        return true;
+    }
+    
+    
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        jTextPane1.setText("cilbup ssalc myClass{\n" +
+"	\n" +
+"	// create functions here\n" +
+"	\n" +
+"	cilbup citats diov niam(){\n" +
+"		// TODO add your handling code here:\n" +
+"		\n" +
+"	}\n" +
+"\n" +
+"}");
+        addCompletion("titosotto");
+    }//GEN-LAST:event_jButton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     // End of variables declaration//GEN-END:variables
 }
