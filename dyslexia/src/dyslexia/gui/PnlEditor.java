@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.swing.ImageIcon;
@@ -83,6 +84,66 @@ public class PnlEditor extends javax.swing.JPanel {
         sp.setBounds(10, 10, 960, 345);
         this.add(sp, BorderLayout.CENTER);
     }
+    
+        private String cleanLine(String line){
+        
+            line = line.replaceAll(";", " ");
+            line = line.replaceAll("\\{", " ");
+            line = line.replaceAll("}", " ");
+            line = line.replaceAll("\\[", " ");
+            line = line.replaceAll("]", " ");
+            line = line.replaceAll("\\(", " ");
+            line = line.replaceAll("\\)", " ");
+            line = line.replaceAll("\"", " ");
+            line = line.replaceAll("\'", " ");
+            line = line.replaceAll("\\+", "");
+            line = line.replaceAll("=", " ");
+            line = line.replaceAll("-", " ");
+            line = line.replaceAll("\\*", " ");
+            line = line.replaceAll("/", " ");
+            line = line.replaceAll("\\.", " ");
+            line = line.replaceAll(",", " ");
+            line = line.replaceAll("<", " ");
+            line = line.replaceAll(">", " ");
+            line = line.replaceAll("!", " ");
+            line = line.replaceAll("%", " ");
+            line = line.replaceAll("&", " ");
+            line = line.replaceAll("\\|", " ");
+            line = line.replaceAll("\\?", " ");
+            line = line.replaceAll("^", " ");
+            line = line.replaceAll("\\s+", " ");
+            return line;
+    }
+
+    private String cleanLineSaveScope(String line){
+        
+            line = line.replaceAll(";", " ");
+            line = line.replaceAll("\\{", " \\{ ");
+            line = line.replaceAll("}", " } ");
+            line = line.replaceAll("\\[", " ");
+            line = line.replaceAll("]", " ");
+            line = line.replaceAll("\\(", " ");
+            line = line.replaceAll("\\)", " ");
+            line = line.replaceAll("\"", " ");
+            line = line.replaceAll("\'", " ");
+            line = line.replaceAll("\\+", "");
+            line = line.replaceAll("=", " ");
+            line = line.replaceAll("-", " ");
+            line = line.replaceAll("\\*", " ");
+            line = line.replaceAll("/", " ");
+            line = line.replaceAll("\\.", " ");
+            line = line.replaceAll(",", " ");
+            line = line.replaceAll("<", " ");
+            line = line.replaceAll(">", " ");
+            line = line.replaceAll("!", " ");
+            line = line.replaceAll("%", " ");
+            line = line.replaceAll("&", " ");
+            line = line.replaceAll("\\|", " ");
+            line = line.replaceAll("\\?", " ");
+            line = line.replaceAll("^", " ");
+            line = line.replaceAll("\\s+", " ");
+            return line;
+    }        
     
     public void addCompletion(String text){
         completionProvider.addCompletion(new BasicCompletion(completionProvider, text));
@@ -195,6 +256,7 @@ public class PnlEditor extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
 
         jButton1.setText("compile and run");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -217,6 +279,13 @@ public class PnlEditor extends javax.swing.JPanel {
             }
         });
 
+        jButton4.setText("loop invariant optimize");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -228,7 +297,9 @@ public class PnlEditor extends javax.swing.JPanel {
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton4)
+                .addContainerGap(149, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -237,7 +308,8 @@ public class PnlEditor extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(jButton4))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -400,30 +472,7 @@ public class PnlEditor extends javax.swing.JPanel {
             //
             jTextPane1.setText(content);
             
-            content = content.replaceAll(";", " ");
-            content = content.replaceAll("\\{", " ");
-            content = content.replaceAll("}", " ");
-            content = content.replaceAll("\\[", " ");
-            content = content.replaceAll("]", " ");
-            content = content.replaceAll("\\(", " ");
-            content = content.replaceAll("\\)", " ");
-            //content = content.replaceAll("\"", " ");
-            //content = content.replaceAll("\'", " ");
-            //content = content.replaceAll("\\+", "");
-            //content = content.replaceAll("=", " ");
-            //content = content.replaceAll("-", " ");
-            //content = content.replaceAll("\\*", " ");
-            //content = content.replaceAll("/", " ");
-            //content = content.replaceAll("\\.", " ");
-            //content = content.replaceAll(",", " ");
-            //content = content.replaceAll("<", " ");
-            //content = content.replaceAll(">", " ");
-            //content = content.replaceAll("!", " ");
-            //content = content.replaceAll("%", " ");
-            //content = content.replaceAll("&", " ");
-            //content = content.replaceAll("|", " ");
-            //content = content.replaceAll("\\?", " ");
-            //content = content.replaceAll("^", " ");
+            content = cleanLine(content);
             String[] splitcontent = content.split("\\s+");
             /*
             for(int i = 0; i < splitcontent.length; i++){
@@ -515,10 +564,122 @@ public class PnlEditor extends javax.swing.JPanel {
         addCompletion("titosotto");
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private boolean hasOpenCurly(String[] arg){
+        for(int i = 0; i < arg.length; i++)
+            if(arg[i].equalsIgnoreCase("{"))
+                return true;
+        return false;
+    }
+
+    private boolean hasCloseCurly(String[] arg){
+        for(int i = 0; i < arg.length; i++)
+            if(arg[i].equalsIgnoreCase("}"))
+                return true;
+        return false;
+    }
+    
+    private boolean hasLoopingVar(String line, String loopingVar){
+        line = cleanLineSaveScope(line);
+        String[] lineArr = line.split("\\s+");
+        for(int i = 0; i < lineArr.length; i++)
+            if(lineArr[i].equals(loopingVar))
+                return true;
+        return false;
+    }
+    
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        String rawCode = jTextPane1.getText();
+        String[] rawCodeArr = rawCode.split("\n");
+        
+        // rawcode linked list copy
+        LinkedList<String> rawCodeLl = new LinkedList<String>();
+        for(int i = 0; i < rawCodeArr.length; i++)
+            rawCodeLl.add(rawCodeArr[i]);
+        
+        int flStart = -1;
+        int flEnd = -1;
+        // find for loop start
+        for(int i = 0; i < rawCodeArr.length; i++){
+            String line = rawCodeArr[i];
+            line = cleanLineSaveScope(line);
+            String[] lineArr = line.split("\\s+");
+            for(int j = 0; j < lineArr.length; j++){
+                if(lineArr[j].equals("rof"))
+                    flStart = i;
+            }
+        }
+        // find for loop end
+        if(flStart != -1){
+            LinkedList<String> scopeStack = new LinkedList<String>();
+            for(int i = flStart; i < rawCodeArr.length; i++){
+                String line = rawCodeArr[i];
+                line = cleanLineSaveScope(line);
+                String[] lineArr = line.split("\\s+");
+                if(hasOpenCurly(lineArr))
+                    scopeStack.push("{");
+                if(hasCloseCurly(lineArr))
+                    scopeStack.pop();
+                if(scopeStack.isEmpty()){
+                    flEnd = i;
+                    break;
+                }
+            }
+        }
+        System.out.println("for detected start "+flStart);
+        System.out.println("for detected end "+flEnd);
+        
+        String loopingVar = "";
+        // get looping var
+        if(flStart != -1 && flEnd != -1){
+            String[] temp = cleanLine(rawCodeArr[flStart]).split("\\s+");
+            for(int i = 0; i < temp.length; i++)
+                if(temp[i].equals("rof")){
+                    loopingVar = temp[i+1];
+                    break;
+                }
+        }
+        System.out.println("looping variable "+loopingVar);
+
+        LinkedList<Integer> loopInvLines = new LinkedList<Integer>();
+        // get inner lines without looping var
+        for(int i = flStart; i < flEnd; i++){
+            if(!hasLoopingVar(rawCodeArr[i], loopingVar)){
+                loopInvLines.add(i);
+            }
+        }
+        
+        // collect invariant lines
+        LinkedList<String> invLines = new LinkedList<String>();
+        for(int i = 0; i < loopInvLines.size(); i++) {
+            invLines.add(rawCodeArr[loopInvLines.get(i)]);
+        }
+        
+        // remove invariant lines
+        for(int i = loopInvLines.size()-1; i >= 0; i--)
+            rawCodeLl.set(loopInvLines.get(i), "\t\t\t\t//transferred out loop");
+        
+        // insert invariant lines top of loop
+        for(int i = 0; i < loopInvLines.size(); i++)
+            rawCodeLl.add(flStart, invLines.get(i));
+        
+        System.out.println("invariant lines:");
+        for(int i =0; i < invLines.size(); i++)
+            System.out.println(invLines.get(i));
+        
+        String newContent = "";
+        for(int i =0; i < rawCodeLl.size(); i++)
+            newContent = newContent + rawCodeLl.get(i) + "\n";
+        
+        jTextPane1.setText(newContent);
+                
+    }//GEN-LAST:event_jButton4ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     // End of variables declaration//GEN-END:variables
 }

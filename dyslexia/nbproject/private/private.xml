@@ -5,6 +5,8 @@
         <group>
             <file>file:/home/jonats/NetBeansProjects/csc617m_dyslexia/dyslexia/src/dyslexia/gui/PnlEditor.java</file>
             <file>file:/home/jonats/NetBeansProjects/csc617m_dyslexia/dyslexia/src/dyslexia/gui/FrmDislexia.java</file>
+            <file>file:/home/jonats/NetBeansProjects/csc617m_dyslexia/dyslexia/src/dyslexia/gui/PnlConsole.java</file>
+            <file>file:/home/jonats/NetBeansProjects/csc617m_dyslexia/dyslexia/src/dyslexia/grammar/Dyslexia.g4</file>
         </group>
     </open-files>
 </project-private>
