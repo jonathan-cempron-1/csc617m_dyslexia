@@ -5,6 +5,8 @@
  */
 package dyslexia.gui;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author jonats
@@ -30,11 +32,13 @@ public class PnlParser extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
 
+        setToolTipText("");
+        setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
         jTextArea1.setBackground(java.awt.Color.black);
         jTextArea1.setColumns(20);
         jTextArea1.setForeground(java.awt.Color.white);
         jTextArea1.setRows(5);
-        jTextArea1.setText("parser output");
         jTextArea1.setCaretColor(java.awt.Color.red);
         jScrollPane1.setViewportView(jTextArea1);
 
@@ -56,6 +60,11 @@ public class PnlParser extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    public void printErrors(ArrayList<String> errors){
+        for ( String error : errors ) {
+            jTextArea1.append(error + "\n");
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;

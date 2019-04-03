@@ -1,4 +1,4 @@
-// Generated from D:\Documents\Graduate Studies\CSC617M\MP\git1\CSC617M_MachineProject\dyslexia\src\dyslexia\grammar\Dyslexia.g4 by ANTLR 4.5.3
+// Generated from D:\Documents\Graduate Studies\CSC617M\MP\minimum-requirements\csc617m_dyslexia\dyslexia\src\dyslexia\grammar\Dyslexia.g4 by ANTLR 4.5.3
 package dyslexia.grammar;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -772,13 +772,97 @@ public class DyslexiaBaseListener implements DyslexiaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFieldModifier(DyslexiaParser.FieldModifierContext ctx) { }
+	@Override public void enterFieldModifier_annotation(DyslexiaParser.FieldModifier_annotationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFieldModifier(DyslexiaParser.FieldModifierContext ctx) { }
+	@Override public void exitFieldModifier_annotation(DyslexiaParser.FieldModifier_annotationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFieldModifier_public(DyslexiaParser.FieldModifier_publicContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFieldModifier_public(DyslexiaParser.FieldModifier_publicContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFieldModifier_protected(DyslexiaParser.FieldModifier_protectedContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFieldModifier_protected(DyslexiaParser.FieldModifier_protectedContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFieldModifier_private(DyslexiaParser.FieldModifier_privateContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFieldModifier_private(DyslexiaParser.FieldModifier_privateContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFieldModifier_static(DyslexiaParser.FieldModifier_staticContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFieldModifier_static(DyslexiaParser.FieldModifier_staticContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFieldModifier_final(DyslexiaParser.FieldModifier_finalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFieldModifier_final(DyslexiaParser.FieldModifier_finalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFieldModifier_transient(DyslexiaParser.FieldModifier_transientContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFieldModifier_transient(DyslexiaParser.FieldModifier_transientContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFieldModifier_volatile(DyslexiaParser.FieldModifier_volatileContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFieldModifier_volatile(DyslexiaParser.FieldModifier_volatileContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1840,13 +1924,145 @@ public class DyslexiaBaseListener implements DyslexiaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatementWithoutTrailingSubstatement(DyslexiaParser.StatementWithoutTrailingSubstatementContext ctx) { }
+	@Override public void enterStatementWithoutTrailingSubstatement_block(DyslexiaParser.StatementWithoutTrailingSubstatement_blockContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatementWithoutTrailingSubstatement(DyslexiaParser.StatementWithoutTrailingSubstatementContext ctx) { }
+	@Override public void exitStatementWithoutTrailingSubstatement_block(DyslexiaParser.StatementWithoutTrailingSubstatement_blockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatementWithoutTrailingSubstatement_emptyStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_emptyStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementWithoutTrailingSubstatement_emptyStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_emptyStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatementWithoutTrailingSubstatement_expressionStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_expressionStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementWithoutTrailingSubstatement_expressionStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_expressionStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatementWithoutTrailingSubstatement_assertStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_assertStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementWithoutTrailingSubstatement_assertStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_assertStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatementWithoutTrailingSubstatement_switchStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_switchStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementWithoutTrailingSubstatement_switchStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_switchStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatementWithoutTrailingSubstatement_doStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_doStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementWithoutTrailingSubstatement_doStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_doStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatementWithoutTrailingSubstatement_breakStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_breakStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementWithoutTrailingSubstatement_breakStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_breakStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatementWithoutTrailingSubstatement_continueStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_continueStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementWithoutTrailingSubstatement_continueStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_continueStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatementWithoutTrailingSubstatement_returnStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_returnStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementWithoutTrailingSubstatement_returnStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_returnStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatementWithoutTrailingSubstatement_synchronizedStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_synchronizedStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementWithoutTrailingSubstatement_synchronizedStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_synchronizedStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatementWithoutTrailingSubstatement_throwStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_throwStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementWithoutTrailingSubstatement_throwStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_throwStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatementWithoutTrailingSubstatement_tryStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_tryStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementWithoutTrailingSubstatement_tryStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_tryStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

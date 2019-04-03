@@ -1,4 +1,4 @@
-// Generated from D:\Documents\Graduate Studies\CSC617M\MP\git1\CSC617M_MachineProject\dyslexia\src\dyslexia\grammar\Dyslexia.g4 by ANTLR 4.5.3
+// Generated from D:\Documents\Graduate Studies\CSC617M\MP\minimum-requirements\csc617m_dyslexia\dyslexia\src\dyslexia\grammar\Dyslexia.g4 by ANTLR 4.5.3
 package dyslexia.grammar;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;

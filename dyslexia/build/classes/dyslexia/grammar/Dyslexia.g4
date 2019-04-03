@@ -332,14 +332,14 @@ fieldDeclaration
 	;
 
 fieldModifier
-	:	annotation
-	|	'cilbup'
-	|	'detcetorp'
-	|	'etavirp'
-	|	'citats'
-	|	'lanif'
-	|	'tneisnart'
-	|	'elitalov'
+	:	annotation      # fieldModifier_annotation
+	|	'cilbup'        # fieldModifier_public
+	|	'detcetorp'     # fieldModifier_protected
+	|	'etavirp'       # fieldModifier_private
+	|	'citats'        # fieldModifier_static
+	|	'lanif'         # fieldModifier_final
+	|	'tneisnart'     # fieldModifier_transient
+	|	'elitalov'      # fieldModifier_volatile
 	;
 
 variableDeclaratorList

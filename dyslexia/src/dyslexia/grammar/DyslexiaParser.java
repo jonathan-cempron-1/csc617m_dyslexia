@@ -1,4 +1,4 @@
-// Generated from D:\Documents\Graduate Studies\CSC617M\MP\git1\CSC617M_MachineProject\dyslexia\src\dyslexia\grammar\Dyslexia.g4 by ANTLR 4.5.3
+// Generated from D:\Documents\Graduate Studies\CSC617M\MP\minimum-requirements\csc617m_dyslexia\dyslexia\src\dyslexia\grammar\Dyslexia.g4 by ANTLR 4.5.3
 package dyslexia.grammar;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -4022,24 +4022,144 @@ public class DyslexiaParser extends Parser {
 	}
 
 	public static class FieldModifierContext extends ParserRuleContext {
-		public AnnotationContext annotation() {
-			return getRuleContext(AnnotationContext.class,0);
-		}
 		public FieldModifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_fieldModifier; }
+	 
+		public FieldModifierContext() { }
+		public void copyFrom(FieldModifierContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class FieldModifier_protectedContext extends FieldModifierContext {
+		public FieldModifier_protectedContext(FieldModifierContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterFieldModifier(this);
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterFieldModifier_protected(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitFieldModifier(this);
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitFieldModifier_protected(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitFieldModifier(this);
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitFieldModifier_protected(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class FieldModifier_publicContext extends FieldModifierContext {
+		public FieldModifier_publicContext(FieldModifierContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterFieldModifier_public(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitFieldModifier_public(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitFieldModifier_public(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class FieldModifier_volatileContext extends FieldModifierContext {
+		public FieldModifier_volatileContext(FieldModifierContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterFieldModifier_volatile(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitFieldModifier_volatile(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitFieldModifier_volatile(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class FieldModifier_privateContext extends FieldModifierContext {
+		public FieldModifier_privateContext(FieldModifierContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterFieldModifier_private(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitFieldModifier_private(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitFieldModifier_private(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class FieldModifier_finalContext extends FieldModifierContext {
+		public FieldModifier_finalContext(FieldModifierContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterFieldModifier_final(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitFieldModifier_final(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitFieldModifier_final(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class FieldModifier_annotationContext extends FieldModifierContext {
+		public AnnotationContext annotation() {
+			return getRuleContext(AnnotationContext.class,0);
+		}
+		public FieldModifier_annotationContext(FieldModifierContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterFieldModifier_annotation(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitFieldModifier_annotation(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitFieldModifier_annotation(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class FieldModifier_staticContext extends FieldModifierContext {
+		public FieldModifier_staticContext(FieldModifierContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterFieldModifier_static(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitFieldModifier_static(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitFieldModifier_static(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class FieldModifier_transientContext extends FieldModifierContext {
+		public FieldModifier_transientContext(FieldModifierContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterFieldModifier_transient(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitFieldModifier_transient(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitFieldModifier_transient(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -4051,6 +4171,7 @@ public class DyslexiaParser extends Parser {
 			setState(882);
 			switch (_input.LA(1)) {
 			case AT:
+				_localctx = new FieldModifier_annotationContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(874);
@@ -4058,6 +4179,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case PUBLIC:
+				_localctx = new FieldModifier_publicContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(875);
@@ -4065,6 +4187,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case PROTECTED:
+				_localctx = new FieldModifier_protectedContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(876);
@@ -4072,6 +4195,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case PRIVATE:
+				_localctx = new FieldModifier_privateContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(877);
@@ -4079,6 +4203,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case STATIC:
+				_localctx = new FieldModifier_staticContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(878);
@@ -4086,6 +4211,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case FINAL:
+				_localctx = new FieldModifier_finalContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(879);
@@ -4093,6 +4219,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case TRANSIENT:
+				_localctx = new FieldModifier_transientContext(_localctx);
 				enterOuterAlt(_localctx, 7);
 				{
 				setState(880);
@@ -4100,6 +4227,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case VOLATILE:
+				_localctx = new FieldModifier_volatileContext(_localctx);
 				enterOuterAlt(_localctx, 8);
 				{
 				setState(881);
@@ -9941,57 +10069,241 @@ public class DyslexiaParser extends Parser {
 	}
 
 	public static class StatementWithoutTrailingSubstatementContext extends ParserRuleContext {
-		public BlockContext block() {
-			return getRuleContext(BlockContext.class,0);
-		}
-		public EmptyStatementContext emptyStatement() {
-			return getRuleContext(EmptyStatementContext.class,0);
-		}
-		public ExpressionStatementContext expressionStatement() {
-			return getRuleContext(ExpressionStatementContext.class,0);
-		}
-		public AssertStatementContext assertStatement() {
-			return getRuleContext(AssertStatementContext.class,0);
-		}
-		public SwitchStatementContext switchStatement() {
-			return getRuleContext(SwitchStatementContext.class,0);
-		}
-		public DoStatementContext doStatement() {
-			return getRuleContext(DoStatementContext.class,0);
-		}
-		public BreakStatementContext breakStatement() {
-			return getRuleContext(BreakStatementContext.class,0);
-		}
-		public ContinueStatementContext continueStatement() {
-			return getRuleContext(ContinueStatementContext.class,0);
-		}
-		public ReturnStatementContext returnStatement() {
-			return getRuleContext(ReturnStatementContext.class,0);
-		}
-		public SynchronizedStatementContext synchronizedStatement() {
-			return getRuleContext(SynchronizedStatementContext.class,0);
-		}
-		public ThrowStatementContext throwStatement() {
-			return getRuleContext(ThrowStatementContext.class,0);
-		}
-		public TryStatementContext tryStatement() {
-			return getRuleContext(TryStatementContext.class,0);
-		}
 		public StatementWithoutTrailingSubstatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_statementWithoutTrailingSubstatement; }
+	 
+		public StatementWithoutTrailingSubstatementContext() { }
+		public void copyFrom(StatementWithoutTrailingSubstatementContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class StatementWithoutTrailingSubstatement_breakStatementContext extends StatementWithoutTrailingSubstatementContext {
+		public BreakStatementContext breakStatement() {
+			return getRuleContext(BreakStatementContext.class,0);
+		}
+		public StatementWithoutTrailingSubstatement_breakStatementContext(StatementWithoutTrailingSubstatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement(this);
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement_breakStatement(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement(this);
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement_breakStatement(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement(this);
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement_breakStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementWithoutTrailingSubstatement_synchronizedStatementContext extends StatementWithoutTrailingSubstatementContext {
+		public SynchronizedStatementContext synchronizedStatement() {
+			return getRuleContext(SynchronizedStatementContext.class,0);
+		}
+		public StatementWithoutTrailingSubstatement_synchronizedStatementContext(StatementWithoutTrailingSubstatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement_synchronizedStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement_synchronizedStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement_synchronizedStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementWithoutTrailingSubstatement_continueStatementContext extends StatementWithoutTrailingSubstatementContext {
+		public ContinueStatementContext continueStatement() {
+			return getRuleContext(ContinueStatementContext.class,0);
+		}
+		public StatementWithoutTrailingSubstatement_continueStatementContext(StatementWithoutTrailingSubstatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement_continueStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement_continueStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement_continueStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementWithoutTrailingSubstatement_tryStatementContext extends StatementWithoutTrailingSubstatementContext {
+		public TryStatementContext tryStatement() {
+			return getRuleContext(TryStatementContext.class,0);
+		}
+		public StatementWithoutTrailingSubstatement_tryStatementContext(StatementWithoutTrailingSubstatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement_tryStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement_tryStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement_tryStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementWithoutTrailingSubstatement_doStatementContext extends StatementWithoutTrailingSubstatementContext {
+		public DoStatementContext doStatement() {
+			return getRuleContext(DoStatementContext.class,0);
+		}
+		public StatementWithoutTrailingSubstatement_doStatementContext(StatementWithoutTrailingSubstatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement_doStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement_doStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement_doStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementWithoutTrailingSubstatement_emptyStatementContext extends StatementWithoutTrailingSubstatementContext {
+		public EmptyStatementContext emptyStatement() {
+			return getRuleContext(EmptyStatementContext.class,0);
+		}
+		public StatementWithoutTrailingSubstatement_emptyStatementContext(StatementWithoutTrailingSubstatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement_emptyStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement_emptyStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement_emptyStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementWithoutTrailingSubstatement_assertStatementContext extends StatementWithoutTrailingSubstatementContext {
+		public AssertStatementContext assertStatement() {
+			return getRuleContext(AssertStatementContext.class,0);
+		}
+		public StatementWithoutTrailingSubstatement_assertStatementContext(StatementWithoutTrailingSubstatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement_assertStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement_assertStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement_assertStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementWithoutTrailingSubstatement_throwStatementContext extends StatementWithoutTrailingSubstatementContext {
+		public ThrowStatementContext throwStatement() {
+			return getRuleContext(ThrowStatementContext.class,0);
+		}
+		public StatementWithoutTrailingSubstatement_throwStatementContext(StatementWithoutTrailingSubstatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement_throwStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement_throwStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement_throwStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementWithoutTrailingSubstatement_expressionStatementContext extends StatementWithoutTrailingSubstatementContext {
+		public ExpressionStatementContext expressionStatement() {
+			return getRuleContext(ExpressionStatementContext.class,0);
+		}
+		public StatementWithoutTrailingSubstatement_expressionStatementContext(StatementWithoutTrailingSubstatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement_expressionStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement_expressionStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement_expressionStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementWithoutTrailingSubstatement_switchStatementContext extends StatementWithoutTrailingSubstatementContext {
+		public SwitchStatementContext switchStatement() {
+			return getRuleContext(SwitchStatementContext.class,0);
+		}
+		public StatementWithoutTrailingSubstatement_switchStatementContext(StatementWithoutTrailingSubstatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement_switchStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement_switchStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement_switchStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementWithoutTrailingSubstatement_blockContext extends StatementWithoutTrailingSubstatementContext {
+		public BlockContext block() {
+			return getRuleContext(BlockContext.class,0);
+		}
+		public StatementWithoutTrailingSubstatement_blockContext(StatementWithoutTrailingSubstatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement_block(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement_block(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement_block(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementWithoutTrailingSubstatement_returnStatementContext extends StatementWithoutTrailingSubstatementContext {
+		public ReturnStatementContext returnStatement() {
+			return getRuleContext(ReturnStatementContext.class,0);
+		}
+		public StatementWithoutTrailingSubstatement_returnStatementContext(StatementWithoutTrailingSubstatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).enterStatementWithoutTrailingSubstatement_returnStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DyslexiaListener ) ((DyslexiaListener)listener).exitStatementWithoutTrailingSubstatement_returnStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DyslexiaVisitor ) return ((DyslexiaVisitor<? extends T>)visitor).visitStatementWithoutTrailingSubstatement_returnStatement(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -10003,6 +10315,7 @@ public class DyslexiaParser extends Parser {
 			setState(1537);
 			switch (_input.LA(1)) {
 			case LBRACE:
+				_localctx = new StatementWithoutTrailingSubstatement_blockContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(1525);
@@ -10010,6 +10323,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case SEMI:
+				_localctx = new StatementWithoutTrailingSubstatement_emptyStatementContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(1526);
@@ -10039,6 +10353,7 @@ public class DyslexiaParser extends Parser {
 			case DEC:
 			case Identifier:
 			case AT:
+				_localctx = new StatementWithoutTrailingSubstatement_expressionStatementContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(1527);
@@ -10046,6 +10361,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case ASSERT:
+				_localctx = new StatementWithoutTrailingSubstatement_assertStatementContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(1528);
@@ -10053,6 +10369,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case SWITCH:
+				_localctx = new StatementWithoutTrailingSubstatement_switchStatementContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(1529);
@@ -10060,6 +10377,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case DO:
+				_localctx = new StatementWithoutTrailingSubstatement_doStatementContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(1530);
@@ -10067,6 +10385,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case BREAK:
+				_localctx = new StatementWithoutTrailingSubstatement_breakStatementContext(_localctx);
 				enterOuterAlt(_localctx, 7);
 				{
 				setState(1531);
@@ -10074,6 +10393,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case CONTINUE:
+				_localctx = new StatementWithoutTrailingSubstatement_continueStatementContext(_localctx);
 				enterOuterAlt(_localctx, 8);
 				{
 				setState(1532);
@@ -10081,6 +10401,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case RETURN:
+				_localctx = new StatementWithoutTrailingSubstatement_returnStatementContext(_localctx);
 				enterOuterAlt(_localctx, 9);
 				{
 				setState(1533);
@@ -10088,6 +10409,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case SYNCHRONIZED:
+				_localctx = new StatementWithoutTrailingSubstatement_synchronizedStatementContext(_localctx);
 				enterOuterAlt(_localctx, 10);
 				{
 				setState(1534);
@@ -10095,6 +10417,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case THROW:
+				_localctx = new StatementWithoutTrailingSubstatement_throwStatementContext(_localctx);
 				enterOuterAlt(_localctx, 11);
 				{
 				setState(1535);
@@ -10102,6 +10425,7 @@ public class DyslexiaParser extends Parser {
 				}
 				break;
 			case TRY:
+				_localctx = new StatementWithoutTrailingSubstatement_tryStatementContext(_localctx);
 				enterOuterAlt(_localctx, 12);
 				{
 				setState(1536);

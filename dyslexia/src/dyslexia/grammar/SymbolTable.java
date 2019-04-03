@@ -55,6 +55,18 @@ public class SymbolTable {
         return null;
     }
     
+    public Symbol findSymbol(String name, String classInstance, String functionInstance) {
+        //System.out.println("FINDING SYMBOL");
+        //System.out.println("name: " + name + " classInstance: " + classInstance + " functionInstance: " + functionInstance);
+        for(int i = 0; i < symbolTable.size(); i ++) {
+            Symbol temp = symbolTable.get(i);
+            //System.out.println("temp: " + temp.toString());
+            if (name.equalsIgnoreCase(temp.getName()) && classInstance.equalsIgnoreCase(temp.getClassInstance()) && functionInstance.equalsIgnoreCase(temp.getFunctionInstance()) )
+                return temp;
+        }
+        return null;
+    }
+    
     public ArrayList<Symbol> findSymbols(String classInstance, String functionInstance) {
         ArrayList<Symbol> symbols = new ArrayList<>();
         for(Symbol symbol : symbolTable) {

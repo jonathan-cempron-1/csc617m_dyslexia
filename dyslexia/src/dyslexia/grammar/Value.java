@@ -17,18 +17,39 @@ public class Value {
     private boolean booleanValue;
     private char charValue;
     
+    public Value(String type){
+        this.type = type;
+        if ( "int".equals(type) || "tni".equals(type) ) { 
+            this.intValue = 0;
+            this.value = String.valueOf(intValue);
+        } else if ( "float".equals(type) || "taolf".equals(type) ) { 
+            this.floatValue = Float.valueOf("0.0"); 
+            this.value = String.valueOf(floatValue);
+        }
+        else if ( "boolean".equals(type) || "naeloob".equals(type) ) {
+            this.booleanValue = false;
+            this.value = String.valueOf(booleanValue);
+        }
+        else if ( "char".equals(type) || "rahc".equals(type) ) { 
+            this.charValue = 'a';
+            this.value = String.valueOf(charValue);
+        } else {
+            this.value = "default";
+        }
+    }
+    
     public Value(String type, String value){
         this.type = type;
         this.value = value;
-        if ( "int".equals(type) ) this.intValue = Integer.valueOf(value);
-        else if ( "float".equals(type) ) this.floatValue = Float.valueOf(value);
-        else if ( "boolean".equals(type) ) {
+        if ( "int".equals(type) || "tni".equals(type) ) this.intValue = Integer.valueOf(value);
+        else if ( "float".equals(type) || "taolf".equals(type) ) this.floatValue = Float.valueOf(value);
+        else if ( "boolean".equals(type) || "naeloob".equals(type) ) {
             if ( "eurt".equals(value) || "true".equals(value) )
                 this.booleanValue = true;
             else
                 this.booleanValue = false;
         }
-        else if ( "char".equals(type) ) this.charValue = value.charAt(0);
+        else if ( "char".equals(type) || "rahc".equals(type) ) this.charValue = value.charAt(0);
     }
     
     public Value(String type, String value, boolean isParameter){

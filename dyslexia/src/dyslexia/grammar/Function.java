@@ -47,7 +47,11 @@ public class Function {
     }
     
     public Parameter getParameter(int i) {
-        return this.parameters.get(i);
+        try {
+            return this.parameters.get(i);
+        } catch(IndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
     public void setParameters(LinkedList<Parameter> parameters) {

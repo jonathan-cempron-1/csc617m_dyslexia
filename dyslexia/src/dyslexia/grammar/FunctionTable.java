@@ -13,7 +13,7 @@ import java.util.Stack;
  * @author Gaming
  */
 public class FunctionTable {
-    private ArrayList<Function> functions = new ArrayList<>();
+    public ArrayList<Function> functions = new ArrayList<>();
     
     public void addFunction(Function function){
         functions.add(function);

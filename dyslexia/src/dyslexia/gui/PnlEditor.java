@@ -6,11 +6,7 @@
 package dyslexia.gui;
 
 import dyslexia.ThrowingErrorListener;
-import dyslexia.grammar.DyslexiaAnnotatedListener;
-import dyslexia.grammar.DyslexiaAnnotatedListenerTac;
-import dyslexia.grammar.DyslexiaEvaluator;
-import dyslexia.grammar.DyslexiaLexer;
-import dyslexia.grammar.DyslexiaParser;
+import dyslexia.grammar.*;
 import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.File;
@@ -44,16 +40,20 @@ public class PnlEditor extends javax.swing.JPanel {
     private PnlConsole pnlConsole;
     private FrmDislexia frmDislexia;
     private PnlTac pnlTac;
+    private PnlParser pnlParser;
+    private PnlSemantic pnlSemantic;
     
     /**
      * Creates new form PnlEditor
      */
-    public PnlEditor(JTabbedPane jTabbedPane1, PnlConsole pnlConsole, FrmDislexia frmDislexia, PnlTac pnlTac) {
+    public PnlEditor(JTabbedPane jTabbedPane1, PnlConsole pnlConsole, FrmDislexia frmDislexia, PnlTac pnlTac, PnlParser pnlParser) {
         initComponents();
         this.jTabbedPane1 = jTabbedPane1;
         this.pnlConsole = pnlConsole;
         this.frmDislexia = frmDislexia;
         this.pnlTac = pnlTac;
+        this.pnlParser = pnlParser;
+        this.pnlSemantic = this.frmDislexia.pnlSemantic; 
         
         jTextPane1.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         jTextPane1.setCodeFoldingEnabled(true);
@@ -144,14 +144,16 @@ public class PnlEditor extends javax.swing.JPanel {
         DyslexiaParser parser = new DyslexiaParser(tokens);
         
         // For Own Implementation of Error Handling
+        DyslexiaParserErrorListener parserErrorListener = new DyslexiaParserErrorListener();
         //parser.removeErrorListeners();
-        //parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+        parser.addErrorListener(parserErrorListener);
         
-        // parser.addErrorListener(new CustomAntlrListener());
         ParseTree tree = parser.compilationUnit();
         System.out.println("START TREE");
         System.out.println(tree.toStringTree(parser));
         System.out.println("END TREE");
+        // printing Errors
+        pnlParser.printErrors(parserErrorListener.errors);
         //System.out.println("TOKENS: " + tokens.getTokens());
         
         // Next will be EvalVisitor
@@ -197,6 +199,27 @@ public class PnlEditor extends javax.swing.JPanel {
         System.out.println("ANNOTATED LISTENER CALLED");
     }
     
+    private boolean semanticErrorListener(ParseTree tree){
+        System.out.println("CHECKING SEMANTIC ERRORS");
+        ParseTreeWalker walker = new ParseTreeWalker();
+        DyslexiaSemanticErrorListener semanticErrorListener = new DyslexiaSemanticErrorListener();
+        //walker.walk(semanticErrorListener, tree);
+        System.out.println("CHECKED SEMANTIC ERRORS");
+        return false;
+    }
+    
+    private boolean semanticErrorVisitor(ParseTree tree){
+        System.out.println("CHECKING SEMANTIC ERRORS");
+        DyslexiaSemanticErrorVisitor errorVisitor = new DyslexiaSemanticErrorVisitor(this.pnlSemantic);
+        errorVisitor.visit(tree);
+        System.out.println("CHECKED SEMANTIC ERRORS");
+        if (errorVisitor.errors.isEmpty())
+            return false;
+        else 
+            this.pnlSemantic.printErrors(errorVisitor.errors);
+        return true;
+    }
+    
     private void evaluate(ParseTree tree){
         System.out.println("EVALUATING TREE");
         DyslexiaEvaluator evaluator = new DyslexiaEvaluator(this.pnlConsole, this.frmDislexia);
@@ -206,12 +229,17 @@ public class PnlEditor extends javax.swing.JPanel {
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        System.out.println("Compiling code...");
+        
+        System.out.println("Interpreting code...");
         ParseTree tree = generateParseTree();
-        //annotatedListener(tree);
-        evaluate(tree);
-        System.out.println("Code Compiled.");
-        annotatedListenerTac(tree);
+        if ( semanticErrorVisitor(tree) ){
+            System.out.println("There are semantic errors.");
+        } else {
+            //annotatedListener(tree);
+            evaluate(tree);
+        }
+        System.out.println("Code Interpreted.");
+        //annotatedListenerTac(tree);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

@@ -1,4 +1,4 @@
-// Generated from D:\Documents\Graduate Studies\CSC617M\MP\git1\CSC617M_MachineProject\dyslexia\src\dyslexia\grammar\Dyslexia.g4 by ANTLR 4.5.3
+// Generated from D:\Documents\Graduate Studies\CSC617M\MP\minimum-requirements\csc617m_dyslexia\dyslexia\src\dyslexia\grammar\Dyslexia.g4 by ANTLR 4.5.3
 package dyslexia.grammar;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -404,11 +404,61 @@ public interface DyslexiaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFieldDeclaration(DyslexiaParser.FieldDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link DyslexiaParser#fieldModifier}.
+	 * Visit a parse tree produced by the {@code fieldModifier_annotation}
+	 * labeled alternative in {@link DyslexiaParser#fieldModifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFieldModifier(DyslexiaParser.FieldModifierContext ctx);
+	T visitFieldModifier_annotation(DyslexiaParser.FieldModifier_annotationContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code fieldModifier_public}
+	 * labeled alternative in {@link DyslexiaParser#fieldModifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldModifier_public(DyslexiaParser.FieldModifier_publicContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code fieldModifier_protected}
+	 * labeled alternative in {@link DyslexiaParser#fieldModifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldModifier_protected(DyslexiaParser.FieldModifier_protectedContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code fieldModifier_private}
+	 * labeled alternative in {@link DyslexiaParser#fieldModifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldModifier_private(DyslexiaParser.FieldModifier_privateContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code fieldModifier_static}
+	 * labeled alternative in {@link DyslexiaParser#fieldModifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldModifier_static(DyslexiaParser.FieldModifier_staticContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code fieldModifier_final}
+	 * labeled alternative in {@link DyslexiaParser#fieldModifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldModifier_final(DyslexiaParser.FieldModifier_finalContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code fieldModifier_transient}
+	 * labeled alternative in {@link DyslexiaParser#fieldModifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldModifier_transient(DyslexiaParser.FieldModifier_transientContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code fieldModifier_volatile}
+	 * labeled alternative in {@link DyslexiaParser#fieldModifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldModifier_volatile(DyslexiaParser.FieldModifier_volatileContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link DyslexiaParser#variableDeclaratorList}.
 	 * @param ctx the parse tree
@@ -954,11 +1004,89 @@ public interface DyslexiaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStatementNoShortIf(DyslexiaParser.StatementNoShortIfContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
+	 * Visit a parse tree produced by the {@code statementWithoutTrailingSubstatement_block}
+	 * labeled alternative in {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatementWithoutTrailingSubstatement(DyslexiaParser.StatementWithoutTrailingSubstatementContext ctx);
+	T visitStatementWithoutTrailingSubstatement_block(DyslexiaParser.StatementWithoutTrailingSubstatement_blockContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code statementWithoutTrailingSubstatement_emptyStatement}
+	 * labeled alternative in {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatementWithoutTrailingSubstatement_emptyStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_emptyStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code statementWithoutTrailingSubstatement_expressionStatement}
+	 * labeled alternative in {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatementWithoutTrailingSubstatement_expressionStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_expressionStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code statementWithoutTrailingSubstatement_assertStatement}
+	 * labeled alternative in {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatementWithoutTrailingSubstatement_assertStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_assertStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code statementWithoutTrailingSubstatement_switchStatement}
+	 * labeled alternative in {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatementWithoutTrailingSubstatement_switchStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_switchStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code statementWithoutTrailingSubstatement_doStatement}
+	 * labeled alternative in {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatementWithoutTrailingSubstatement_doStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_doStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code statementWithoutTrailingSubstatement_breakStatement}
+	 * labeled alternative in {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatementWithoutTrailingSubstatement_breakStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_breakStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code statementWithoutTrailingSubstatement_continueStatement}
+	 * labeled alternative in {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatementWithoutTrailingSubstatement_continueStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_continueStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code statementWithoutTrailingSubstatement_returnStatement}
+	 * labeled alternative in {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatementWithoutTrailingSubstatement_returnStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_returnStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code statementWithoutTrailingSubstatement_synchronizedStatement}
+	 * labeled alternative in {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatementWithoutTrailingSubstatement_synchronizedStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_synchronizedStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code statementWithoutTrailingSubstatement_throwStatement}
+	 * labeled alternative in {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatementWithoutTrailingSubstatement_throwStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_throwStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code statementWithoutTrailingSubstatement_tryStatement}
+	 * labeled alternative in {@link DyslexiaParser#statementWithoutTrailingSubstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatementWithoutTrailingSubstatement_tryStatement(DyslexiaParser.StatementWithoutTrailingSubstatement_tryStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link DyslexiaParser#emptyStatement}.
 	 * @param ctx the parse tree
