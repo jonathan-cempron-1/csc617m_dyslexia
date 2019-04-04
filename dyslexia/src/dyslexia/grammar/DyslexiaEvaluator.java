@@ -89,6 +89,101 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         return values; 
     }
     
+    // Fields
+    // global variable
+    @Override public ArrayList<Value> visitFieldDeclaration(DyslexiaParser.FieldDeclarationContext ctx) { 
+        ArrayList<Value> unannType = visit(ctx.unannType());
+        ArrayList<Value> variableDeclaratorList = visit(ctx.variableDeclaratorList());
+        ArrayList<Value> modifiers = new ArrayList<>();
+        
+        // checks if there are modifiers
+        if ( !ctx.fieldModifier().isEmpty() ) modifiers = visit(ctx.fieldModifier(0)); // only accept 1 modifier final
+        
+        Symbol symbol = null;
+        
+        String variableName = "";
+        ArrayList<Value> variableInitializer = new ArrayList<>(); 
+        Value input = null;
+        Value expression = null;
+        for( Value value : variableDeclaratorList ) {
+            //System.out.println("varuableDeclaratorList: " + value.toString());
+            if ( "variable".equals(value.getType()) ) variableName = value.getStringValue();
+            else if ( "tupni".equals(value.getType()) ) input = value;
+            else if ( "expressionName".equals(value.getType())) expression = value;
+            else variableInitializer.add(value);
+        }
+        
+        //System.out.println("INPUT STRING: " + inputString + " EQUALS() " + inputString.equals("") + " !EQUALS(): " + !inputString.equals(""));
+        //System.out.println("VARIABLE INITIALIZER: " + variableInitializer.isEmpty() );
+        
+        String definitionType = unannType.get(0).getStringValue();
+        
+        
+        if ( input != null ) {
+            // double check type here of definition to input String
+            symbol = new Symbol(variableName, definitionType, input.getStringValue(), this.currentClassName, "");
+        } else if ( expression != null ) {
+            // global symbol
+            Symbol globalExpressionReference = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+            Symbol expressionReference = null;
+            
+            expressionReference = globalExpressionReference;
+            
+
+           
+            if ( modifiers.isEmpty() ) {
+                // no final modifier
+                symbol = new Symbol(variableName, definitionType, expressionReference.getSingleValue(), this.currentClassName, "");
+            } else {
+                // with modifier
+                symbol = new Symbol(variableName, definitionType, expressionReference.getSingleValue(), this.currentClassName, "", true);
+            }
+
+        } else if ( variableInitializer.isEmpty() ) {
+            // no right hand side
+            String initializedValue = "";
+            if ( "tni".equals(definitionType) ) initializedValue = "0";
+            else if ( "taolf".equals(definitionType) ) initializedValue = "0.0";
+            else if ( "elbuod".equals(definitionType) ) initializedValue = "0.0";
+            else if ( "rahc".equals(definitionType) ) initializedValue = "0";
+            else if ( "naeloob".equals(definitionType) ) initializedValue = "eslaf";
+            else if ( "gnirts".equals(definitionType) ) initializedValue = "";
+            
+            symbol = new Symbol(variableName, definitionType, initializedValue, this.currentClassName, "");
+        } else if ( variableInitializer.size() == 1) { 
+            // only 1 variable
+            if ( modifiers.isEmpty() ) {
+                // no final modifier
+                symbol = new Symbol(variableName, definitionType, variableInitializer.get(0).getStringValue(), this.currentClassName, "");
+            } else {
+                // with modifier
+                symbol = new Symbol(variableName, definitionType, variableInitializer.get(0).getStringValue(), this.currentClassName, "", true);
+            }
+        } else {
+            // It is an arrayType
+            String[] strings = new String[variableInitializer.size()];
+            
+            for(int i = 0; i < strings.length; i++ ) {
+                strings[i] = variableInitializer.get(i).getStringValue();
+            }
+            
+            symbol = new Symbol(variableName, definitionType, strings, this.currentClassName, "");
+        }
+        
+        symbolTable.addSymbol(symbol);
+        pnlConsole.println("Declared Symbol: " + symbol.toString());
+        return null;
+    }
+    
+    // fieldModifier
+    @Override public ArrayList<Value> visitFieldModifier_final(DyslexiaParser.FieldModifier_finalContext ctx) { 
+        ArrayList<Value> values = new ArrayList<>();
+        String modifier = ctx.getText();
+        values.add(new Value("modifier", modifier));
+        return values; 
+    }
+    
     // Methods
     // methodDeclarator
     // This contains the identifier and the parameter list of the methods
@@ -107,7 +202,6 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         values.addAll(visit(ctx.methodDeclarator()));
         values.addAll(visit(ctx.result()));
         return values;
-        //return visitChildren(ctx); 
     }
     
     // methodDeclaration
@@ -192,18 +286,38 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         if ( "tuptuo".equals(methodName.getStringValue()) ){
             // only output
             for ( Value value : argumentList ) {
-                if ( "variable".equals(value.getType()) ) {
-                    Symbol symbol = symbolTable.findSymbol(value.getStringValue(), this.functionCalls.peek());
-                    value = new Value(symbol.getType(), symbol.getSingleValue());
+                if ( "expressionName".equals(value.getType()) ) {
+                    // local symbol
+                    Symbol localSymbol = symbolTable.findSymbol(value.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+                    // global symbol
+                    Symbol globalSymbol = symbolTable.findSymbol(value.getStringValue(), this.currentClassName, "");
+
+                    Symbol variable = null;
+                    if ( localSymbol != null )
+                        variable = localSymbol;
+                    else
+                        variable = globalSymbol;
+                    value = new Value(variable.getType(), variable.getSingleValue());
                 }
                 pnlConsole.print(value.getStringValue());
             }
         } else if ( "nltuptuo".equals(methodName.getStringValue()) ) {
             // output line
             for ( Value value : argumentList ) {
-                if ( "variable".equals(value.getType()) ) {
-                    Symbol symbol = symbolTable.findSymbol(value.getStringValue(), this.functionCalls.peek());
-                    value = new Value(symbol.getType(), symbol.getSingleValue());
+                if ( "expressionName".equals(value.getType()) ) {
+                    // local symbol
+                    Symbol localSymbol = symbolTable.findSymbol(value.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+                    // global symbol
+                    Symbol globalSymbol = symbolTable.findSymbol(value.getStringValue(), this.currentClassName, "");
+
+                    Symbol variable = null;
+                    if ( localSymbol != null )
+                        variable = localSymbol;
+                    else
+                        variable = globalSymbol;
+                    value = new Value(variable.getType(), variable.getSingleValue());
                 }
                 pnlConsole.println(value.getStringValue());
             }
@@ -228,8 +342,19 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
                     // all arguments should be put into the symbol table with the corresponding parameter
                     Parameter parameter = functionCall.getParameter(i);
                     Value argument = argumentList.get(i);
-                    if ( "variable".equals(argument.getType()) ) {
-                        Symbol variable = symbolTable.findSymbol(argument.getStringValue(), this.functionCalls.peek());
+                    if ( "expressionName".equals(argument.getType()) ) {
+                        // local symbol
+                        Symbol localSymbol = symbolTable.findSymbol(argument.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+                        // global symbol
+                        Symbol globalSymbol = symbolTable.findSymbol(argument.getStringValue(), this.currentClassName, "");
+
+                        Symbol variable = null;
+                        if ( localSymbol != null )
+                            variable = localSymbol;
+                        else
+                            variable = globalSymbol;
+                            
                         argument = new Value( variable.getType(), variable.getSingleValue() );
                     } 
                     symbolTable.addSymbol(new Symbol(parameter.getName(), parameter.getType(), argument.getStringValue(), this.currentClassName, functionCallInstance));
@@ -262,8 +387,19 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         ArrayList<Value> expressions = visit(ctx.expression());
         System.out.println(" VISITING RETURN STATEMENT");
         for( Value expression : expressions ){
-            if ( "variable".equals(expression.getType()) ) {
-                Symbol variable = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
+            if ( "expressionName".equals(expression.getType()) ) {
+                // local symbol
+                Symbol localSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+                // global symbol
+                Symbol globalSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+                Symbol variable = null;
+                if ( localSymbol != null )
+                    variable = localSymbol;
+                else
+                    variable = globalSymbol;
+                
                 expression = new Value( variable.getType(), variable.getSingleValue() );
             }
             System.out.println("Expression: " + expression.toString());
@@ -296,10 +432,35 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         ArrayList<Value> values = new ArrayList<Value>();
         ArrayList<Value> leftHandSide = visit(ctx.leftHandSide());
         Value expression = visit(ctx.expression()).get(0);
-        Symbol symbol = symbolTable.findSymbol(leftHandSide.get(0).getStringValue(), this.functionCalls.peek());
+        Symbol symbol = null;
+                
+        // local symbol
+        Symbol localSymbol = symbolTable.findSymbol(leftHandSide.get(0).getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+        // global symbol
+        Symbol globalSymbol = symbolTable.findSymbol(leftHandSide.get(0).getStringValue(), this.currentClassName, "");
+        
+        if ( localSymbol != null )
+            symbol = localSymbol;
+        else
+            symbol = globalSymbol;
+        
         Symbol variableReference = null;
         Symbol newSymbol = null;
-        if ( "variable".equals(expression.getType()) )  variableReference = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
+        if ( "expressionName".equals(expression.getType()) ) {
+            // local symbol
+            Symbol localVariableReference = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalVariableReference = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+            if ( localVariableReference != null )
+                variableReference = localVariableReference;
+            else
+                variableReference = globalVariableReference;
+                
+            variableReference = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
+        }
         
         symbolTable.removeSymbol(symbol);
         
@@ -385,8 +546,18 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
                     // all arguments should be put into the symbol table with the corresponding parameter
                     Parameter parameter = functionCall.getParameter(i);
                     Value argument = argumentList.get(i);
-                    if ( "variable".equals(argument.getType()) ) {
-                        Symbol variable = symbolTable.findSymbol(argument.getStringValue(), this.functionCalls.peek());
+                    if ( "expressionName".equals(argument.getType()) ) {
+                        // local symbol
+                        Symbol localSymbol = symbolTable.findSymbol(argument.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+                        // global symbol
+                        Symbol globalSymbol = symbolTable.findSymbol(argument.getStringValue(), this.currentClassName, "");
+
+                        Symbol variable = null;
+                        if ( localSymbol != null )
+                            variable = localSymbol;
+                        else
+                            variable = globalSymbol;
                         argument = new Value( variable.getType(), variable.getSingleValue() );
                     } 
                     symbolTable.addSymbol(new Symbol(parameter.getName(), parameter.getType(), argument.getStringValue(), this.currentClassName, functionCallInstance));
@@ -429,10 +600,12 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         String variableName = "";
         String inputString = "";
         ArrayList<Value> variableInitializer = new ArrayList<>(); 
+        Value expression = null;
         for( Value value : variableDeclaratorList ) {
             //System.out.println("varuableDeclaratorList: " + value.toString());
             if ( "variable".equals(value.getType()) ) variableName = value.getStringValue();
             else if ( "tupni".equals(value.getType()) ) inputString = value.getStringValue();
+            else if ( "expressionName".equals(value.getType())) expression = value;
             else variableInitializer.add(value);
         }
         
@@ -445,15 +618,37 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         if ( !inputString.equals("") ) {
             // double check type here of definition to input String
             symbol = new Symbol(variableName, definitionType, inputString, this.currentClassName, this.functionCalls.peek());
+        } else if ( expression != null ) {
+            // local symbol
+            Symbol localExpressionReference = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalExpressionReference = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+            Symbol expressionReference = null;
+            if ( localExpressionReference != null )
+                expressionReference = localExpressionReference;
+            else
+                expressionReference = globalExpressionReference;
+            
+           
+            if ( modifiers.isEmpty() ) {
+                // no final modifier
+                symbol = new Symbol(variableName, definitionType, expressionReference.getSingleValue(), this.currentClassName, this.functionCalls.peek());
+            } else {
+                // with modifier
+                symbol = new Symbol(variableName, definitionType, expressionReference.getSingleValue(), this.currentClassName, this.functionCalls.peek(), true);
+            }
+
         } else if ( variableInitializer.isEmpty() ) {
             // no right hand side
             String initializedValue = "";
-            if ( "int".equals(definitionType) ) initializedValue = "0";
-            else if ( "float".equals(definitionType) ) initializedValue = "0.0";
-            else if ( "double".equals(definitionType) ) initializedValue = "0.0";
-            else if ( "char".equals(definitionType) ) initializedValue = "0";
-            else if ( "boolean".equals(definitionType) ) initializedValue = "eslaf";
-            else if ( "string".equals(definitionType) ) initializedValue = "";
+            if ( "tni".equals(definitionType) ) initializedValue = "0";
+            else if ( "taolf".equals(definitionType) ) initializedValue = "0.0";
+            else if ( "elbuod".equals(definitionType) ) initializedValue = "0.0";
+            else if ( "rahc".equals(definitionType) ) initializedValue = "0";
+            else if ( "naeloob".equals(definitionType) ) initializedValue = "eslaf";
+            else if ( "gnirts".equals(definitionType) ) initializedValue = "";
             
             symbol = new Symbol(variableName, definitionType, initializedValue, this.currentClassName, this.functionCalls.peek());
         } else if ( variableInitializer.size() == 1) { 
@@ -527,8 +722,19 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         Value expression = visit(ctx.expression(0)).get(0);
         
         Symbol symbol = symbolTable.findSymbol(variableName.getStringValue(), this.functionCalls.peek());
-        if ( "variable".equals(expression.getType()) ) {
-            Symbol variable = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
+        if ( "expressionName".equals(expression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
             int index = Integer.parseInt(variable.getSingleValue());
             values.add( new Value(symbol.getType(), symbol.getMultiValue()[index]));
         } else values.add( new Value(symbol.getType(), symbol.getMultiValue()[expression.getIntValue()]));
@@ -542,7 +748,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         
         // Don't check symbol table yet just return
         String identifier = ctx.Identifier().getText();
-        values.add( new Value("variable", identifier) );
+        values.add( new Value("expressionName", identifier) );
         return values; 
     }
     
@@ -553,9 +759,21 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         // check first if value is variable
         Value expression = visit(ctx.unaryExpression()).get(0);
         
-        if ( "variable".equals(expression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
-            values.add(new Value(symbol.getType(), "-".concat(symbol.getSingleValue()) ));
+        if ( "expressionName".equals(expression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            values.add(new Value(variable.getType(), "-".concat(variable.getSingleValue()) ));
         } else
             values.add(new Value(expression.getType(), "-".concat(expression.getStringValue())));
         return values; 
@@ -571,9 +789,19 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         
         
         // check if expression is a variable
-        if ( "variable".equals(expression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
-            expression = new Value(symbol.getType(), symbol.getSingleValue() );
+        if ( "expressionName".equals(expression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            expression = new Value(variable.getType(), variable.getSingleValue() );
             //System.out.println(" SYMBOL: " + symbol.toString());
         }
         
@@ -596,9 +824,19 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         
         
         // check if expression is a variable
-        if ( "variable".equals(expression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
-            expression = new Value(symbol.getType(), symbol.getSingleValue() );
+        if ( "expressionName".equals(expression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            expression = new Value(variable.getType(), variable.getSingleValue() );
             //System.out.println(" SYMBOL: " + symbol.toString());
         }
         
@@ -623,9 +861,19 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         Value expression = expressions.get(0);
         
         // check if expression is a variable
-        if ( "variable".equals(expression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
-            expression = new Value(symbol.getType(), symbol.getSingleValue() );
+        if ( "expressionName".equals(expression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            expression = new Value(variable.getType(), variable.getSingleValue() );
             //System.out.println(" SYMBOL: " + symbol.toString());
         }
         
@@ -637,7 +885,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
             expressions = visit(ctx.expression());
             expression = expressions.get(0);
             // check if expression is a variable when variable has been updated
-            if ( "variable".equals(expression.getType()) ) {
+            if ( "expressionName".equals(expression.getType()) ) {
                 Symbol symbol = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
                 expression = new Value(symbol.getType(), symbol.getSingleValue() );
                 //System.out.println(" SYMBOL: " + symbol.toString());
@@ -661,9 +909,20 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
             expression = expressions.get(0);
             
             // check if expression is a variable
-            if ( "variable".equals(expression.getType()) ) {
-                Symbol symbol = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
-                expression = new Value(symbol.getType(), symbol.getSingleValue() );
+            if ( "expressionName".equals(expression.getType()) ) {
+               // local symbol
+                Symbol localSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+                // global symbol
+                Symbol globalSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+                Symbol variable = null;
+                if ( localSymbol != null )
+                    variable = localSymbol;
+                else
+                    variable = globalSymbol;
+                
+                expression = new Value(variable.getType(), variable.getSingleValue() );
             }
         } while( "boolean".equals(expression.getType()) && ( true == expression.getBooleanValue() ) );
         
@@ -695,9 +954,20 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
             expression = expressions.get(0);
             
             // check if expression is a variable
-            if ( "variable".equals(expression.getType()) ) {
-                Symbol symbol = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
-                expression = new Value(symbol.getType(), symbol.getSingleValue() );
+            if ( "expressionName".equals(expression.getType()) ) {
+                // local symbol
+                Symbol localSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+                // global symbol
+                Symbol globalSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+                Symbol variable = null;
+                if ( localSymbol != null )
+                    variable = localSymbol;
+                else
+                    variable = globalSymbol;
+                
+                expression = new Value(variable.getType(), variable.getSingleValue() );
             }
         }
         
@@ -734,28 +1004,54 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         float floatResult = 0;
         
         // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "float".equals(leftExpression.getType()) && "float".equals(rightExpression.getType()) ) {
+        if ( "taolf".equals(leftExpression.getType()) && "taolf".equals(rightExpression.getType()) ) {
             floatResult = leftExpression.getFloatValue() + rightExpression.getFloatValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
-        } else if ( "float".equals(leftExpression.getType()) ){
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
+        } else if ( "taolf".equals(leftExpression.getType()) ){
             floatResult = leftExpression.getFloatValue() + rightExpression.getIntValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
-        } else if ( "float".equals(rightExpression.getType()) ){
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
+        } else if ( "taolf".equals(rightExpression.getType()) ){
             floatResult = leftExpression.getIntValue() + rightExpression.getFloatValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
         } else {
             intResult = leftExpression.getIntValue() + rightExpression.getIntValue();
-            values.add( new Value("int", String.valueOf(intResult) ));
+            values.add( new Value("tni", String.valueOf(intResult) ));
         }
         
         //System.out.println("VISITED ADDITIVE EXPRESSION ADD");
@@ -775,28 +1071,54 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         float floatResult = 0;
         
         // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "float".equals(leftExpression.getType()) && "float".equals(rightExpression.getType()) ) {
+        if ( "taolf".equals(leftExpression.getType()) && "taolf".equals(rightExpression.getType()) ) {
             floatResult = leftExpression.getFloatValue() - rightExpression.getFloatValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
-        } else if ( "float".equals(leftExpression.getType()) ){
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
+        } else if ( "taolf".equals(leftExpression.getType()) ){
             floatResult = leftExpression.getFloatValue() - rightExpression.getIntValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
-        } else if ( "float".equals(rightExpression.getType()) ){
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
+        } else if ( "taolf".equals(rightExpression.getType()) ){
             floatResult = leftExpression.getIntValue() - rightExpression.getFloatValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
         } else {
             intResult = leftExpression.getIntValue() - rightExpression.getIntValue();
-            values.add( new Value("int", String.valueOf(intResult) ));
+            values.add( new Value("tni", String.valueOf(intResult) ));
         }
         
         return values; 
@@ -815,28 +1137,54 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         float floatResult = 0;
         
         // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "float".equals(leftExpression.getType()) && "float".equals(rightExpression.getType()) ) {
+        if ( "taolf".equals(leftExpression.getType()) && "taolf".equals(rightExpression.getType()) ) {
             floatResult = leftExpression.getFloatValue() * rightExpression.getFloatValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
-        } else if ( "float".equals(leftExpression.getType()) ){
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
+        } else if ( "taolf".equals(leftExpression.getType()) ){
             floatResult = leftExpression.getFloatValue() * rightExpression.getIntValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
-        } else if ( "float".equals(rightExpression.getType()) ){
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
+        } else if ( "taolf".equals(rightExpression.getType()) ){
             floatResult = leftExpression.getIntValue() * rightExpression.getFloatValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
         } else {
             intResult = leftExpression.getIntValue() * rightExpression.getIntValue();
-            values.add( new Value("int", String.valueOf(intResult) ));
+            values.add( new Value("tni", String.valueOf(intResult) ));
         }
         
         return values; 
@@ -855,28 +1203,54 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         float floatResult = 0;
         
         // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "float".equals(leftExpression.getType()) && "float".equals(rightExpression.getType()) ) {
+        if ( "taolf".equals(leftExpression.getType()) && "taolf".equals(rightExpression.getType()) ) {
             floatResult = leftExpression.getFloatValue() / rightExpression.getFloatValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
-        } else if ( "float".equals(leftExpression.getType()) ){
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
+        } else if ( "taolf".equals(leftExpression.getType()) ){
             floatResult = leftExpression.getFloatValue() / rightExpression.getIntValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
-        } else if ( "float".equals(rightExpression.getType()) ){
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
+        } else if ( "taolf".equals(rightExpression.getType()) ){
             floatResult = leftExpression.getIntValue() / rightExpression.getFloatValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
         } else {
             intResult = leftExpression.getIntValue() / rightExpression.getIntValue();
-            values.add( new Value("int", String.valueOf(intResult) ));
+            values.add( new Value("tni", String.valueOf(intResult) ));
         }
         
         return values; 
@@ -895,28 +1269,54 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         float floatResult = 0;
         
         // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "float".equals(leftExpression.getType()) && "float".equals(rightExpression.getType()) ) {
+        if ( "taolf".equals(leftExpression.getType()) && "taolf".equals(rightExpression.getType()) ) {
             floatResult = leftExpression.getFloatValue() % rightExpression.getFloatValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
-        } else if ( "float".equals(leftExpression.getType()) ){
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
+        } else if ( "taolf".equals(leftExpression.getType()) ){
             floatResult = leftExpression.getFloatValue() % rightExpression.getIntValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
-        } else if ( "float".equals(rightExpression.getType()) ){
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
+        } else if ( "taolf".equals(rightExpression.getType()) ){
             floatResult = leftExpression.getIntValue() % rightExpression.getFloatValue();
-            values.add( new Value("float", String.valueOf(floatResult) ));
+            values.add( new Value("taolf", String.valueOf(floatResult) ));
         } else {
             intResult = leftExpression.getIntValue() % rightExpression.getIntValue();
-            values.add( new Value("int", String.valueOf(intResult) ));
+            values.add( new Value("tni", String.valueOf(intResult) ));
         }
         
         return values;
@@ -935,24 +1335,50 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         boolean result = false;
         
         // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
         // then check if both of them are of equal type
         if ( leftExpression.getType().equals(rightExpression.getType()) ) {
-            if ( "int".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() == rightExpression.getIntValue();
-            else if ( "float".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() == rightExpression.getFloatValue();
-            else if ( "boolean".equals(leftExpression.getType()) ) result = leftExpression.getBooleanValue() == rightExpression.getBooleanValue();
+            if ( "tni".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() == rightExpression.getIntValue();
+            else if ( "taolf".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() == rightExpression.getFloatValue();
+            else if ( "naeloob".equals(leftExpression.getType()) ) result = leftExpression.getBooleanValue() == rightExpression.getBooleanValue();
             //else if ( "char".equals(leftExpression.getType()) ) result = leftExpression.getCharValue() == rightValue.getCharValue(); // TODO CHECK CHAR VALUE
-            else if ( "string".equals(leftExpression.getType()) ) result = leftExpression.getStringValue().equals(rightExpression.getStringValue());
-            values.add( new Value("boolean", String.valueOf(result)) );
+            else if ( "gnirts".equals(leftExpression.getType()) ) result = leftExpression.getStringValue().equals(rightExpression.getStringValue());
+            values.add( new Value("naeloob", String.valueOf(result)) );
         }
         
         return values; 
@@ -970,24 +1396,50 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         boolean result = false;
         
         // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
         // then check if both of them are of equal type
         if ( leftExpression.getType().equals(rightExpression.getType()) ) {
-            if ( "int".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() != rightExpression.getIntValue();
-            else if ( "float".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() != rightExpression.getFloatValue();
-            else if ( "boolean".equals(leftExpression.getType()) ) result = leftExpression.getBooleanValue() != rightExpression.getBooleanValue();
+            if ( "tni".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() != rightExpression.getIntValue();
+            else if ( "taolf".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() != rightExpression.getFloatValue();
+            else if ( "naeloob".equals(leftExpression.getType()) ) result = leftExpression.getBooleanValue() != rightExpression.getBooleanValue();
             //else if ( "char".equals(leftExpression.getType()) ) result = leftExpression.getCharValue() != rightValue.getCharValue(); // TODO CHECK CHAR VALUE
-            else if ( "string".equals(leftExpression.getType()) ) result = !leftExpression.getStringValue().equals(rightExpression.getStringValue());
-            values.add( new Value("boolean", String.valueOf(result)) );
+            else if ( "gnirts".equals(leftExpression.getType()) ) result = !leftExpression.getStringValue().equals(rightExpression.getStringValue());
+            values.add( new Value("naeloob", String.valueOf(result)) );
         }
         
         return values;
@@ -1006,24 +1458,50 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         boolean result = false;
         
         // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
         // then check if both of them are of equal type
         if ( leftExpression.getType().equals(rightExpression.getType()) ) {
-            if ( "int".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() < rightExpression.getIntValue();
-            else if ( "float".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() < rightExpression.getFloatValue();
+            if ( "tni".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() < rightExpression.getIntValue();
+            else if ( "taolf".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() < rightExpression.getFloatValue();
             //else if ( "boolean".equals(leftExpression.getType()) ) result = leftExpression.getBooleanValue() < rightExpression.getBooleanValue();
             //else if ( "char".equals(leftExpression.getType()) ) result = leftExpression.getCharValue() != rightValue.getCharValue(); // TODO CHECK CHAR VALUE
             //else if ( "string".equals(leftExpression.getType()) ) result = !leftExpression.getStringValue().equals(rightExpression.getStringValue());
-            values.add( new Value("boolean", String.valueOf(result)) );
+            values.add( new Value("naeloob", String.valueOf(result)) );
         }
         
         return values;
@@ -1041,24 +1519,50 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         boolean result = false;
         
         // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
         // then check if both of them are of equal type
         if ( leftExpression.getType().equals(rightExpression.getType()) ) {
-            if ( "int".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() > rightExpression.getIntValue();
-            else if ( "float".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() > rightExpression.getFloatValue();
+            if ( "tni".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() > rightExpression.getIntValue();
+            else if ( "taolf".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() > rightExpression.getFloatValue();
             //else if ( "boolean".equals(leftExpression.getType()) ) result = leftExpression.getBooleanValue() < rightExpression.getBooleanValue();
             //else if ( "char".equals(leftExpression.getType()) ) result = leftExpression.getCharValue() != rightValue.getCharValue(); // TODO CHECK CHAR VALUE
             //else if ( "string".equals(leftExpression.getType()) ) result = !leftExpression.getStringValue().equals(rightExpression.getStringValue());
-            values.add( new Value("boolean", String.valueOf(result)) );
+            values.add( new Value("naeloob", String.valueOf(result)) );
         }
         
         return values; 
@@ -1076,24 +1580,50 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         boolean result = false;
         
         // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
         // then check if both of them are of equal type
         if ( leftExpression.getType().equals(rightExpression.getType()) ) {
-            if ( "int".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() <= rightExpression.getIntValue();
-            else if ( "float".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() <= rightExpression.getFloatValue();
+            if ( "tni".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() <= rightExpression.getIntValue();
+            else if ( "taolf".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() <= rightExpression.getFloatValue();
             //else if ( "boolean".equals(leftExpression.getType()) ) result = leftExpression.getBooleanValue() < rightExpression.getBooleanValue();
             //else if ( "char".equals(leftExpression.getType()) ) result = leftExpression.getCharValue() != rightValue.getCharValue(); // TODO CHECK CHAR VALUE
             //else if ( "string".equals(leftExpression.getType()) ) result = !leftExpression.getStringValue().equals(rightExpression.getStringValue());
-            values.add( new Value("boolean", String.valueOf(result)) );
+            values.add( new Value("naeloob", String.valueOf(result)) );
         }
         
         return values;
@@ -1111,24 +1641,50 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         boolean result = false;
         
         // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
         // then check if both of them are of equal type
         if ( leftExpression.getType().equals(rightExpression.getType()) ) {
-            if ( "int".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() >= rightExpression.getIntValue();
-            else if ( "float".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() >= rightExpression.getFloatValue();
+            if ( "tni".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() >= rightExpression.getIntValue();
+            else if ( "taolf".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() >= rightExpression.getFloatValue();
             //else if ( "boolean".equals(leftExpression.getType()) ) result = leftExpression.getBooleanValue() < rightExpression.getBooleanValue();
             //else if ( "char".equals(leftExpression.getType()) ) result = leftExpression.getCharValue() != rightValue.getCharValue(); // TODO CHECK CHAR VALUE
             //else if ( "string".equals(leftExpression.getType()) ) result = !leftExpression.getStringValue().equals(rightExpression.getStringValue());
-            values.add( new Value("boolean", String.valueOf(result)) );
+            values.add( new Value("naeloob", String.valueOf(result)) );
         }
         
         return values;
@@ -1146,24 +1702,50 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         boolean result = false;
         
         // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
         // then check if both of them are of equal type
         if ( leftExpression.getType().equals(rightExpression.getType()) ) {
             //if ( "int".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() >= rightExpression.getIntValue();
             //else if ( "float".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() >= rightExpression.getFloatValue();
-            if ( "boolean".equals(leftExpression.getType()) ) result = leftExpression.getBooleanValue() && rightExpression.getBooleanValue();
+            if ( "naeloob".equals(leftExpression.getType()) ) result = leftExpression.getBooleanValue() && rightExpression.getBooleanValue();
             //else if ( "char".equals(leftExpression.getType()) ) result = leftExpression.getCharValue() != rightValue.getCharValue(); // TODO CHECK CHAR VALUE
             //else if ( "string".equals(leftExpression.getType()) ) result = !leftExpression.getStringValue().equals(rightExpression.getStringValue());
-            values.add( new Value("boolean", String.valueOf(result)) );
+            values.add( new Value("naeloob", String.valueOf(result)) );
         }
         
         return values;
@@ -1180,25 +1762,51 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         
         boolean result = false;
         
-        // Check first if each of them is a variable
-        if ( "variable".equals(leftExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.functionCalls.peek());
-            leftExpression = new Value(symbol.getType(), symbol.getSingleValue());
+       // Check first if each of them is a variable
+        if ( "expressionName".equals(leftExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(leftExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            leftExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
-        if ( "variable".equals(rightExpression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.functionCalls.peek());
-            rightExpression = new Value(symbol.getType(), symbol.getSingleValue());
+        if ( "expressionName".equals(rightExpression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(rightExpression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            rightExpression = new Value(variable.getType(), variable.getSingleValue());
         }
         
         // then check if both of them are of equal type
         if ( leftExpression.getType().equals(rightExpression.getType()) ) {
             //if ( "int".equals(leftExpression.getType()) ) result = leftExpression.getIntValue() >= rightExpression.getIntValue();
             //else if ( "float".equals(leftExpression.getType()) ) result = leftExpression.getFloatValue() >= rightExpression.getFloatValue();
-            if ( "boolean".equals(leftExpression.getType()) ) result = leftExpression.getBooleanValue() || rightExpression.getBooleanValue();
+            if ( "naeloob".equals(leftExpression.getType()) ) result = leftExpression.getBooleanValue() || rightExpression.getBooleanValue();
             //else if ( "char".equals(leftExpression.getType()) ) result = leftExpression.getCharValue() != rightValue.getCharValue(); // TODO CHECK CHAR VALUE
             //else if ( "string".equals(leftExpression.getType()) ) result = !leftExpression.getStringValue().equals(rightExpression.getStringValue());
-            values.add( new Value("boolean", String.valueOf(result)) );
+            values.add( new Value("naeloob", String.valueOf(result)) );
         }
         
         return values;
@@ -1216,7 +1824,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     @Override public ArrayList<Value> visitIntegralType(DyslexiaParser.IntegralTypeContext ctx) { 
         ArrayList<Value> values = new ArrayList<>();
         String type = ctx.getText();
-        if ( "tni".equals(type) ) values.add(new Value("type", "int"));
+        if ( "tni".equals(type) ) values.add(new Value("type", "tni"));
         else if ( "rahc".equals(type) ) values.add(new Value("type", "char"));
         return values;
         //return visitChildren(ctx); 
@@ -1226,8 +1834,8 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     @Override public ArrayList<Value> visitFloatingPointType(DyslexiaParser.FloatingPointTypeContext ctx) { 
         ArrayList<Value> values = new ArrayList<>();
         String type = ctx.getText();
-        if ( "taolf".equals(type) ) values.add( new Value("type", "float") );
-        else if ( "elbuod".equals(type) ) values.add( new Value("type", "double") );
+        if ( "taolf".equals(type) ) values.add( new Value("type", "taolf") );
+        else if ( "elbuod".equals(type) ) values.add( new Value("type", "elbuod") );
         return values;
         //return visitChildren(ctx); 
     }
@@ -1236,7 +1844,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     @Override public ArrayList<Value> visitUnannPrimitiveType_boolean(DyslexiaParser.UnannPrimitiveType_booleanContext ctx) { 
         ArrayList<Value> values = new ArrayList<>();
         String type = ctx.getText();
-        if ( "naeloob".equals(type) ) values.add( new Value("type", "boolean") );
+        if ( "naeloob".equals(type) ) values.add( new Value("type", "naeloob") );
         return values;
         //return visitChildren(ctx); 
     }
@@ -1245,7 +1853,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     @Override public ArrayList<Value> visitUnannClassType_lfno_unannClassOrInterfaceType(DyslexiaParser.UnannClassType_lfno_unannClassOrInterfaceTypeContext ctx) { 
         ArrayList<Value> values = new ArrayList<>();
         String type = ctx.Identifier().getText();
-        if ( "gnirts".equals(type) ) values.add(new Value("type", "string") );
+        if ( "gnirts".equals(type) ) values.add(new Value("type", "gnirts") );
         return values; 
     }
     
@@ -1277,14 +1885,14 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     @Override public ArrayList<Value> visitIntegerLiteral(DyslexiaParser.IntegerLiteralContext ctx) { 
         ArrayList<Value> values = new ArrayList<>();
         String intText = ctx.IntegerLiteral().getText();
-        values.add( new Value("int", intText) );
+        values.add( new Value("tni", intText) );
         return values; 
     }
     
     @Override public ArrayList<Value> visitFloatingPointLiteral(DyslexiaParser.FloatingPointLiteralContext ctx) { 
         ArrayList<Value> values = new ArrayList<>();
         String floatText = ctx.FloatingPointLiteral().getText();
-        values.add( new Value("float", floatText) );
+        values.add( new Value("taolf", floatText) );
         return values; 
         //return visitChildren(ctx); 
     }
@@ -1292,28 +1900,28 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     @Override public ArrayList<Value> visitBooleanLiteral(DyslexiaParser.BooleanLiteralContext ctx) { 
         ArrayList<Value> values = new ArrayList<>();
         String booleanText = ctx.BooleanLiteral().getText();
-        if ( "eurt".equals(booleanText) ) values.add( new Value("boolean", "true") );
-        else values.add( new Value("boolean", "false") );
+        if ( "eurt".equals(booleanText) ) values.add( new Value("naeloob", "eurt") );
+        else values.add( new Value("naeloob", "eslaf") );
         return values;
     }
     
     @Override public ArrayList<Value> visitCharacterLiteral(DyslexiaParser.CharacterLiteralContext ctx) { 
         ArrayList<Value> values = new ArrayList<>();
         String charText = ctx.CharacterLiteral().getText();
-        values.add( new Value("char", charText) );
+        values.add( new Value("rahc", charText) );
         return values; 
     }
     
     @Override public ArrayList<Value> visitStringLiteral(DyslexiaParser.StringLiteralContext ctx) { 
         ArrayList<Value> values = new ArrayList<>();
         String stringText = ctx.StringLiteral().getText();
-        values.add( new Value("string", stringText) );
+        values.add( new Value("gnirts", stringText) );
         return values; 
     }
     
     @Override public ArrayList<Value> visitNullLiteral(DyslexiaParser.NullLiteralContext ctx) { 
         ArrayList<Value> values = new ArrayList<>();
-        values.add( new Value("null", "null") );
+        values.add( new Value("llun", "llun") );
         return values; 
     }
 }

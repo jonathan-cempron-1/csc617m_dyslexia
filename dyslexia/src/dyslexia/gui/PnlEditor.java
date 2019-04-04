@@ -476,6 +476,13 @@ public class PnlEditor extends javax.swing.JPanel {
         return true;
     }
     
+     private void generateTac(ParseTree tree) {
+        System.out.println("GENERATING THREE ADDRESS CODE");
+        DyslexiaTacVisitor dyslexiaTacVisitor = new DyslexiaTacVisitor(this.frmDislexia);
+        dyslexiaTacVisitor.visit(tree);
+        System.out.println("GENERETED THREE ADDRESS CODE");
+    }
+
     private void evaluate(ParseTree tree){
         System.out.println("EVALUATING TREE");
         DyslexiaEvaluator evaluator = new DyslexiaEvaluator(this.pnlConsole, this.frmDislexia);
@@ -493,6 +500,7 @@ public class PnlEditor extends javax.swing.JPanel {
         } else {
             //annotatedListener(tree);
             evaluate(tree);
+            generateTac(tree);
         }
         System.out.println("Code Interpreted.");
         //annotatedListenerTac(tree);

@@ -224,7 +224,7 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
                         // all arguments should be put into the symbol table with the corresponding parameter
                         Parameter parameter = functionCall.getParameter(i);
                         Value argument = argumentList.get(i);
-                        if ( "variable".equals(argument.getType()) ) {
+                        if ( "expressionName".equals(argument.getType()) ) {
                             // local symbol
                             Symbol localSymbol = symbolTable.findSymbol(argument.getStringValue(), this.currentClassName, this.functionCalls.peek());
 
@@ -305,7 +305,7 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
     
                         Parameter parameter = functionCall.getParameter(i);
                         Value argument = argumentList.get(i);
-                        if ( "variable".equals(argument.getType()) ) {
+                        if ( "expressionName".equals(argument.getType()) ) {
                             // local symbol
                             Symbol localSymbol = symbolTable.findSymbol(argument.getStringValue(), this.currentClassName, this.functionCalls.peek());
 
@@ -384,11 +384,13 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
         Symbol globalSymbol = null;
         String variableName = "";
         Value input = null;
+        Value expression = null;
         ArrayList<Value> variableInitializer = new ArrayList<>(); 
         for( Value value : variableDeclaratorList ) {
-            //System.out.println("varuableDeclaratorList: " + value.toString());
+            System.out.println(" variableDeclaratorList: " + value.toString());
             if ( "variable".equals(value.getType()) ) variableName = value.getStringValue();
             else if ( "tupni".equals(value.getType()) ) input = value;
+            else if ( "expressionName".equals(value.getType())) expression = value;
             else variableInitializer.add(value);
         }
         
@@ -408,6 +410,37 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
         } else if ( input != null ) {
             // double check type here of definition to input String
             symbol = new Symbol(variableName, definitionType, input.getStringValue(), this.currentClassName, this.functionCalls.peek());
+        } else if ( expression != null ) {
+            // local symbol
+            Symbol localExpressionReference = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalExpressionReference = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+            Symbol expressionReference = null;
+            if ( localExpressionReference != null )
+                expressionReference = localExpressionReference;
+            else
+                expressionReference = globalExpressionReference;
+            
+            if ( expressionReference != null){
+                if ( !definitionType.equals(expressionReference.getType()) ){
+                    errors.add(new Error(ctx.getStart().getLine(), "Error: Data type mismatch. DefinitionType: '" + definitionType + "' Reference Type: '" + expressionReference.getType() + "' Reference Variable Name: '" + expressionReference.getName() + "'"));
+                } else {
+                    System.out.println( " Expression Reference: " + expressionReference.toString() );
+                    if ( modifiers.isEmpty() ) {
+                        // no final modifier
+                        symbol = new Symbol(variableName, definitionType, expressionReference.getSingleValue(), this.currentClassName, this.functionCalls.peek());
+                    } else {
+                        // with modifier
+                        symbol = new Symbol(variableName, definitionType, expressionReference.getSingleValue(), this.currentClassName, this.functionCalls.peek(), true);
+                    }
+                }
+                
+            } else {
+                errors.add(new Error(ctx.getStart().getLine(), "Error: Variable is not declared. Variable Name: '" + expression.getStringValue() + "'"));
+            }
+            
         } else if ( variableInitializer.isEmpty() ) {
             // no right hand side
             String initializedValue = "";
@@ -424,6 +457,7 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
             // check first if definitionType is equal to the literal on the right side
             //System.out.println("definitionType: " + definitionType + " Right side literal type: " + variableInitializer.get(0).getType());
             //System.out.println("!definitionType.equals(variableInitializer.get(0).getType()): " + !definitionType.equals(variableInitializer.get(0).getType()));
+            
             if ( !definitionType.equals(variableInitializer.get(0).getType())) {
                 errors.add(new Error(ctx.getStart().getLine(), "Error: Incompatible types definitionType: '" + definitionType + "' Value literal: '" + variableInitializer.get(0).getType() + "' Value: '" + variableInitializer.get(0).getStringValue() + "'"));
             }
@@ -537,7 +571,7 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
             symbol = globalSymbol;
         
         // if the expression inside the 
-        if ( "variable".equals(expression.getType()) ) {
+        if ( "expressionName".equals(expression.getType()) ) {
             // local symbol
             Symbol localVariable = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
 
@@ -590,10 +624,12 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
         String variableName = "";
         Value input = null;
         ArrayList<Value> variableInitializer = new ArrayList<>(); 
+        Value expression = null;
         for( Value value : variableDeclaratorList ) {
-            //System.out.println("varuableDeclaratorList: " + value.toString());
+            //System.out.println("variableDeclaratorList: " + value.toString());
             if ( "variable".equals(value.getType()) ) variableName = value.getStringValue();
             else if ( "tupni".equals(value.getType()) ) input = value;
+            else if ( "expressionName".equals(value.getType())) expression = value;
             else variableInitializer.add(value);
         }
         
@@ -608,6 +644,32 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
         } else if ( input != null ) {
             // double check type here of definition to input String
             symbol = new Symbol(variableName, definitionType, input.getStringValue(), this.currentClassName, "");
+        } else if ( expression != null ) {
+            // global symbol
+            Symbol globalExpressionReference = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+            Symbol expressionReference = null;
+
+            expressionReference = globalExpressionReference;
+            
+            if ( expressionReference != null){
+                if ( !definitionType.equals(expressionReference.getType()) ){
+                    errors.add(new Error(ctx.getStart().getLine(), "Error: Data type mismatch. DefinitionType: '" + definitionType + "' Reference Type: '" + expressionReference.getType() + "' Reference Variable Name: '" + expressionReference.getName() + "'"));
+                } else {
+                    System.out.println( " Expression Reference: " + expressionReference.toString() );
+                    if ( modifiers.isEmpty() ) {
+                        // no final modifier
+                        symbol = new Symbol(variableName, definitionType, expressionReference.getSingleValue(), this.currentClassName, "");
+                    } else {
+                        // with modifier
+                        symbol = new Symbol(variableName, definitionType, expressionReference.getSingleValue(), this.currentClassName, "", true);
+                    }
+                }
+                
+            } else {
+                errors.add(new Error(ctx.getStart().getLine(), "Error: Variable is not declared. Variable Name: '" + expression.getStringValue() + "'"));
+            }
+
         } else if ( variableInitializer.isEmpty() ) {
             // no right hand side
             String initializedValue = "";
@@ -712,7 +774,7 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
         Symbol newSymbol = null;
 
         // if symbol is still null it wasn't declared
-        if ( "variable".equals(expression.getType()) )  {
+        if ( "expressionName".equals(expression.getType()) )  {
             // If it is local
             variableReference = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
             if ( variableReference == null ) // If it is global
@@ -766,10 +828,10 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
                     // check data type mismatch
                     if ( !symbol.getType().equals(variableReference.getType()) )
                         errors.add(new Error(ctx.getStart().getLine(), "Error: Data type mismatch."));
-                } else if ( variableReference == null && !"variable".equals(expression.getType())) {
+                } else if ( variableReference == null && !"expressionName".equals(expression.getType())) {
                     if ( !symbol.getType().equals(expression.getType()))
                         errors.add(new Error(ctx.getStart().getLine(), "Error: Data type mismatch."));
-                } else if ( variableReference == null && "variable".equals(expression.getType()) ){
+                } else if ( variableReference == null && "expressionName".equals(expression.getType()) ){
                     errors.add(new Error(ctx.getStart().getLine(), "Error: Variable not declared. Variable Name: '" + expression.getStringValue() + "'"));
                 }
             } 
@@ -780,11 +842,11 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
                     // check data type mismatch
                     if ( !symbol.getType().equals(variableReference.getType()) )
                         errors.add(new Error(ctx.getStart().getLine(), "Error: Data type mismatch."));
-                } else if ( variableReference == null && !"variable".equals(expression.getType())) {
+                } else if ( variableReference == null && !"expressionName".equals(expression.getType())) {
                     if ( !symbol.getType().equals(expression.getType()))
                         errors.add(new Error(ctx.getStart().getLine(), "Error: Data type mismatch."));
                 }
-            } else if ( variableReference == null && "variable".equals(expression.getType()) ){
+            } else if ( variableReference == null && "expressionName".equals(expression.getType()) ){
                  errors.add(new Error(ctx.getStart().getLine(), "Error: Variable not declared. Variable Name: '" + expression.getStringValue() + "'"));
             }
         }        
@@ -801,7 +863,7 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
         // Don't check symbol table yet just return
         String identifier = ctx.Identifier().getText();
         System.out.println("EXPRESSION IDENTIFIER: " + identifier);
-        values.add( new Value("variable", identifier) );
+        values.add( new Value("expressionName", identifier) );
         return values; 
     }
     
@@ -812,9 +874,22 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
         // check first if value is variable
         Value expression = visit(ctx.unaryExpression()).get(0);
         
-        if ( "variable".equals(expression.getType()) ) {
-            Symbol symbol = symbolTable.findSymbol(expression.getStringValue(), this.functionCalls.peek());
-            values.add(new Value(symbol.getType(), "-".concat(symbol.getSingleValue()) ));
+        if ( "expressionName".equals(expression.getType()) ) {
+            // local symbol
+            Symbol localSymbol = null;
+            if ( !this.functionCalls.empty() )
+                localSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, this.functionCalls.peek());
+
+            // global symbol
+            Symbol globalSymbol = symbolTable.findSymbol(expression.getStringValue(), this.currentClassName, "");
+
+            Symbol variable = null;
+            if ( localSymbol != null )
+                variable = localSymbol;
+            else
+                variable = globalSymbol;
+            
+            values.add(new Value(variable.getType(), "-".concat(variable.getSingleValue()) ));
         } else
             values.add(new Value(expression.getType(), "-".concat(expression.getStringValue())));
         return values; 

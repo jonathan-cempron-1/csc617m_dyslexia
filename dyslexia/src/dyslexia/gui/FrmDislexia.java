@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 public class FrmDislexia extends javax.swing.JFrame {
     
     public PnlSemantic pnlSemantic;
+    public PnlTac pnlTac;
     
     /**
      * Creates new form FrmDislexia
@@ -23,7 +24,7 @@ public class FrmDislexia extends javax.swing.JFrame {
         ImageIcon icon = new ImageIcon();
         //PnlTree pnlTree = new PnlTree();
         PnlConsole pnlConsole = new PnlConsole();
-        PnlTac pnlTac = new PnlTac();
+        this.pnlTac = new PnlTac();
         PnlParser pnlParser = new PnlParser();
         this.pnlSemantic = new PnlSemantic();
         jTabbedPane1.addTab("editor", icon, new PnlEditor(jTabbedPane1, pnlConsole, this, pnlTac, pnlParser), "editor");
@@ -31,8 +32,8 @@ public class FrmDislexia extends javax.swing.JFrame {
         jTabbedPane2.addTab("console", icon, pnlConsole, "console");
         jTabbedPane2.addTab("debug", icon, new PnlScanner(), "debug");
         jTabbedPane2.addTab("parser", icon, pnlParser, "parser");
-        jTabbedPane2.addTab("semantic", icon, pnlSemantic, "semantic");
-        jTabbedPane2.addTab("tac", icon, pnlTac, "tac");
+        jTabbedPane2.addTab("semantic", icon, this.pnlSemantic, "semantic");
+        jTabbedPane2.addTab("tac", icon, this.pnlTac, "tac");
         this.setResizable(false);
         this.setVisible(true);
     }
