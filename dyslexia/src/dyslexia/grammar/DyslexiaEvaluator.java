@@ -10,6 +10,7 @@ import dyslexia.grammar.DyslexiaParser.ExpressionContext;
 import dyslexia.grammar.DyslexiaParser.VariableInitializerContext;
 import dyslexia.gui.FrmDislexia;
 import dyslexia.gui.PnlConsole;
+import dyslexia.gui.PnlScanner;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Stack;
@@ -23,6 +24,8 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     // GUI Components
     private PnlConsole pnlConsole;
     private FrmDislexia frmDislexia;
+    private PnlScanner pnlDebugger;
+    private int breakPoint = 0;
     
     // Class Variables
     private String currentClassName = "";
@@ -39,22 +42,27 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     public DyslexiaEvaluator(PnlConsole pnlConsole, FrmDislexia frmDislexia){
         this.pnlConsole = pnlConsole;
         this.frmDislexia = frmDislexia;
+        this.pnlDebugger = frmDislexia.pnlDebugger;
+        this.breakPoint = pnlDebugger.breakPoint;
     }
     
     public void printSymbolTable(){
-        pnlConsole.println("SYMBOL TABLE START");
+        pnlDebugger.println("SYMBOL TABLE START");
         for ( Symbol symbol : symbolTable.symbolTable ) {
-            pnlConsole.println(symbol.toString());
+            pnlDebugger.println(symbol.toString());
         }
-        pnlConsole.println("SYMBOL TABLE END");
+        pnlDebugger.println("SYMBOL TABLE END");
     }
     
     
     @Override public ArrayList<Value> visitCompilationUnit(DyslexiaParser.CompilationUnitContext ctx) { 
         ArrayList<Value> values = new ArrayList<>();
-        pnlConsole.println("EVALUATING TREE");
+        //pnlDebugger.println("Breakpoint: " + pnlDebugger.breakPoint);
+        pnlDebugger.println("DEBUGGING TREE");
+        pnlConsole.println("PROGRAM START");
         visitChildren(ctx);
-        pnlConsole.println("EVALUATED TREE");
+        pnlDebugger.println("DEBUGGED TREE");
+        pnlConsole.println("PROGRAM END");
         printSymbolTable();
         return values; 
     }
@@ -92,6 +100,11 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     // Fields
     // global variable
     @Override public ArrayList<Value> visitFieldDeclaration(DyslexiaParser.FieldDeclarationContext ctx) { 
+        int currentLineNumber = ctx.getStart().getLine();
+        if ( currentLineNumber == this.breakPoint ){
+            Object[] options = {"Yes!"};
+            JOptionPane.showOptionDialog(this.frmDislexia,"Continue?", "Break Point Reached!", JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        }
         ArrayList<Value> unannType = visit(ctx.unannType());
         ArrayList<Value> variableDeclaratorList = visit(ctx.variableDeclaratorList());
         ArrayList<Value> modifiers = new ArrayList<>();
@@ -172,7 +185,8 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         }
         
         symbolTable.addSymbol(symbol);
-        pnlConsole.println("Declared Symbol: " + symbol.toString());
+        pnlDebugger.println("Declared Symbol: ");
+        pnlDebugger.println(symbol.toString());
         return null;
     }
     
@@ -267,6 +281,11 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     // methodInvocation
     // methodInvocation_methodName
     @Override public ArrayList<Value> visitMethodInvocation_methodName(DyslexiaParser.MethodInvocation_methodNameContext ctx) { 
+        int currentLineNumber = ctx.getStart().getLine();
+        if ( currentLineNumber == this.breakPoint ){
+            Object[] options = {"Yes!"};
+            JOptionPane.showOptionDialog(this.frmDislexia,"Continue?", "Break Point Reached!", JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        }
         ArrayList<Value> values = new ArrayList<>();
         ArrayList<Value> methodNames = visit(ctx.methodName());
         ArrayList<Value> argumentList = new ArrayList<>();
@@ -383,6 +402,11 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     
     // returnStatement
     @Override public ArrayList<Value> visitReturnStatement(DyslexiaParser.ReturnStatementContext ctx) { 
+        int currentLineNumber = ctx.getStart().getLine();
+        if ( currentLineNumber == this.breakPoint ){
+            Object[] options = {"Yes!"};
+            JOptionPane.showOptionDialog(this.frmDislexia,"Continue?", "Break Point Reached!", JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        }
         ArrayList<Value> values = new ArrayList<>();
         ArrayList<Value> expressions = visit(ctx.expression());
         System.out.println(" VISITING RETURN STATEMENT");
@@ -429,6 +453,11 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     // Assignments
     // assignment
     @Override public ArrayList<Value> visitAssignment(DyslexiaParser.AssignmentContext ctx) { 
+        int currentLineNumber = ctx.getStart().getLine();
+        if ( currentLineNumber == this.breakPoint ){
+            Object[] options = {"Yes!"};
+            JOptionPane.showOptionDialog(this.frmDislexia,"Continue?", "Break Point Reached!", JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        }
         ArrayList<Value> values = new ArrayList<Value>();
         ArrayList<Value> leftHandSide = visit(ctx.leftHandSide());
         Value expression = visit(ctx.expression()).get(0);
@@ -464,8 +493,8 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         
         symbolTable.removeSymbol(symbol);
         
-        pnlConsole.println("Assignment Statement: ");
-        pnlConsole.println("Replacing Symbol: " + symbol.toString());
+        pnlDebugger.println("Assignment Statement: ");
+        pnlDebugger.println("Old Symbol: " + symbol.toString());
         if ( leftHandSide.size() > 1 ) { 
             // leftHandSide is an array and has index
             int index = leftHandSide.get(1).getIntValue();
@@ -487,7 +516,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
             }
         }
         
-        pnlConsole.println("With Symbol: " + newSymbol.toString() );
+        pnlDebugger.println("New Symbol: " + newSymbol.toString() );
         
         symbolTable.addSymbol(newSymbol);
         return values; 
@@ -571,6 +600,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
             ArrayList<Value> returnValues = visit(functionCall.getMethodBodyContextCtx());
             // only 1 return value
             if ( !returnValues.isEmpty() ){
+                System.out.println(" I AM RETURNING " + returnValues.get(0).toString()); 
                 Value returnValue = returnValues.get(0);
                 values.add(returnValue);
             }
@@ -588,6 +618,11 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     // This is to check if it is equal to the definition and to the type of the right hand side
     // only accepts one variable at the left hand side
     @Override public ArrayList<Value> visitLocalVariableDeclaration(DyslexiaParser.LocalVariableDeclarationContext ctx) { 
+        int currentLineNumber = ctx.getStart().getLine();
+        if ( currentLineNumber == this.breakPoint ){
+            Object[] options = {"Yes!"};
+            JOptionPane.showOptionDialog(this.frmDislexia,"Continue?", "Break Point Reached!", JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        }
         ArrayList<Value> unannType = visit(ctx.unannType());
         ArrayList<Value> variableDeclaratorList = visit(ctx.variableDeclaratorList());
         ArrayList<Value> modifiers = new ArrayList<>();
@@ -672,7 +707,8 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         }
         
         symbolTable.addSymbol(symbol);
-        pnlConsole.println("Declared Symbol: " + symbol.toString());
+        pnlDebugger.println("Declared Symbol: ");
+        pnlDebugger.println(symbol.toString());
         //return visitChildren(ctx);
         return null;
     }
@@ -782,6 +818,11 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     // IfThen Statememnts
     // ifThenStatement
     @Override public ArrayList<Value> visitIfThenStatement(DyslexiaParser.IfThenStatementContext ctx) { 
+        int currentLineNumber = ctx.getStart().getLine();
+        if ( currentLineNumber == this.breakPoint ){
+            Object[] options = {"Yes!"};
+            JOptionPane.showOptionDialog(this.frmDislexia,"Continue?", "Break Point Reached!", JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        }
         System.out.println("VISITING IFTHENSTATEMENT");
         ArrayList<Value> values = new ArrayList<>();
         ArrayList<Value> expressions = visit(ctx.expression());
@@ -808,7 +849,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         
         System.out.println(" IFTHEN EXPRESSION: " + expression.toString() );
         
-        if ( "boolean".equals(expression.getType()) && ( true == expression.getBooleanValue() ) ) {
+        if ( "naeloob".equals(expression.getType()) && ( true == expression.getBooleanValue() ) ) {
             ArrayList<Value> statement = visit(ctx.statement());
             if ( statement != null ) values.addAll(statement);
         }
@@ -818,6 +859,11 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     
     // ifThenElseStatement
     @Override public ArrayList<Value> visitIfThenElseStatement(DyslexiaParser.IfThenElseStatementContext ctx) { 
+        int currentLineNumber = ctx.getStart().getLine();
+        if ( currentLineNumber == this.breakPoint ){
+            Object[] options = {"Yes!"};
+            JOptionPane.showOptionDialog(this.frmDislexia,"Continue?", "Break Point Reached!", JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        }
         ArrayList<Value> values = new ArrayList<>();
         ArrayList<Value> expressions = visit(ctx.expression());
         Value expression = expressions.get(0);
@@ -843,7 +889,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         
         //System.out.println("IFTHENELSE: " +  ctx.expression().getText() + "EXPRESSION: " + expression.toString() );
         
-        if ( "boolean".equals(expression.getType()) && ( true == expression.getBooleanValue() ) ){
+        if ( "naeloob".equals(expression.getType()) && ( true == expression.getBooleanValue() ) ){
             ArrayList<Value> statementNoShortIf = visit(ctx.statementNoShortIf());
             if ( statementNoShortIf != null ) values.addAll(statementNoShortIf);
         } else {
@@ -856,6 +902,11 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     // Loops
     // whileStatement
     @Override public ArrayList<Value> visitWhileStatement(DyslexiaParser.WhileStatementContext ctx) { 
+        int currentLineNumber = ctx.getStart().getLine();
+        if ( currentLineNumber == this.breakPoint ){
+            Object[] options = {"Yes!"};
+            JOptionPane.showOptionDialog(this.frmDislexia,"Continue?", "Break Point Reached!", JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        }
         ArrayList<Value> values = new ArrayList<>(); 
         ArrayList<Value> expressions = visit(ctx.expression());
         Value expression = expressions.get(0);
@@ -877,7 +928,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
             //System.out.println(" SYMBOL: " + symbol.toString());
         }
         
-        while ( "boolean".equals(expression.getType()) && ( true == expression.getBooleanValue() ) ) {
+        while ( "naeloob".equals(expression.getType()) && ( true == expression.getBooleanValue() ) ) {
             //System.out.println("I AM IN WHILE STATEMENT");
             visit(ctx.statement());
             
@@ -896,6 +947,11 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     
     // doStatement
     @Override public ArrayList<Value> visitDoStatement(DyslexiaParser.DoStatementContext ctx) { 
+        int currentLineNumber = ctx.getStart().getLine();
+        if ( currentLineNumber == this.breakPoint ){
+            Object[] options = {"Yes!"};
+            JOptionPane.showOptionDialog(this.frmDislexia,"Continue?", "Break Point Reached!", JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        }
         ArrayList<Value> values = new ArrayList<>(); 
         ArrayList<Value> expressions;
         Value expression;
@@ -924,13 +980,18 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
                 
                 expression = new Value(variable.getType(), variable.getSingleValue() );
             }
-        } while( "boolean".equals(expression.getType()) && ( true == expression.getBooleanValue() ) );
+        } while( "naeloob".equals(expression.getType()) && ( true == expression.getBooleanValue() ) );
         
         return null;
     }
     
     // basicForStatement
     @Override public ArrayList<Value> visitBasicForStatement(DyslexiaParser.BasicForStatementContext ctx) { 
+        int currentLineNumber = ctx.getStart().getLine();
+        if ( currentLineNumber == this.breakPoint ){
+            Object[] options = {"Yes!"};
+            JOptionPane.showOptionDialog(this.frmDislexia,"Continue?", "Break Point Reached!", JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        }
         ArrayList<Value> values = new ArrayList<>();
         ArrayList<Value> expressions;
         Value expression;
@@ -942,7 +1003,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         expressions = visit(ctx.expression());
         expression = expressions.get(0);
         
-        while( "boolean".equals(expression.getType()) && ( true == expression.getBooleanValue() ) ){
+        while( "naeloob".equals(expression.getType()) && ( true == expression.getBooleanValue() ) ){
             // visit the statements inside
             visit(ctx.statement());
             

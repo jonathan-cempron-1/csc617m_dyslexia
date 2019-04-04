@@ -799,7 +799,11 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
         
         if ( leftHandSide.size() > 1 ) { 
             // leftHandSide is an array and has index
-            System.out.println(" ARRAY ACCESS");
+            //System.out.println(" ARRAY ACCESS");
+            //System.out.println(" INDEX: " + leftHandSide.get(1).getStringValue());
+            //System.out.println(" LINE OF CODE: " + ctx.getText());
+            Value indexValue = leftHandSide.get(1);
+            
             int index = Integer.valueOf(leftHandSide.get(1).getStringValue());
             String[] strings = new String[symbol.getMultiValue().length];
             

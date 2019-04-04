@@ -759,6 +759,24 @@ public class DyslexiaTacVisitor extends DyslexiaBaseVisitor<ArrayList<Value>> {
         return values; 
     }
     
+    // arrayInitializer
+    @Override public ArrayList<Value> visitArrayInitializer(DyslexiaParser.ArrayInitializerContext ctx) { 
+        ArrayList<Value> values = new ArrayList<>();
+        if ( ctx.variableInitializerList() != null ) values.addAll(visit(ctx.variableInitializerList()));
+        return values; 
+    }
+    
+    // arrayAccess
+    @Override public ArrayList<Value> visitArrayAccess(DyslexiaParser.ArrayAccessContext ctx) { 
+        ArrayList<Value> values = new ArrayList<>();
+        Value variableName = visit(ctx.expressionName()).get(0);
+        Value expression = visit(ctx.expression(0)).get(0);
+        values.add(variableName);
+        // before adding expression make sure that it is type int
+        values.add(new Value("index", expression.getStringValue()));
+        return values; 
+    }
+    
     // Math Expressions
     // additiveExpression_add
     @Override public ArrayList<Value> visitAdditiveExpression_add(DyslexiaParser.AdditiveExpression_addContext ctx) { 

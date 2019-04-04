@@ -46,6 +46,8 @@ public class PnlEditor extends javax.swing.JPanel {
     private PnlTac pnlTac;
     private PnlParser pnlParser;
     private PnlSemantic pnlSemantic;
+    private PnlScanner pnlDebugger;
+    private ParseTree globalParseTree;
     private DefaultCompletionProvider completionProvider = new DefaultCompletionProvider();
     
     /**
@@ -59,6 +61,7 @@ public class PnlEditor extends javax.swing.JPanel {
         this.pnlTac = pnlTac;
         this.pnlParser = pnlParser;
         this.pnlSemantic = this.frmDislexia.pnlSemantic; 
+        this.pnlDebugger = this.frmDislexia.pnlDebugger;
         
         jTextPane1.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         jTextPane1.setCodeFoldingEnabled(true);
@@ -290,6 +293,7 @@ public class PnlEditor extends javax.swing.JPanel {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
 
         jButton1.setText("compile and run");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -333,6 +337,13 @@ public class PnlEditor extends javax.swing.JPanel {
             }
         });
 
+        jButton7.setText("generate tac");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -350,7 +361,9 @@ public class PnlEditor extends javax.swing.JPanel {
                 .addComponent(jButton5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton6)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton7)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -362,7 +375,8 @@ public class PnlEditor extends javax.swing.JPanel {
                     .addComponent(jButton3)
                     .addComponent(jButton4)
                     .addComponent(jButton5)
-                    .addComponent(jButton6))
+                    .addComponent(jButton6)
+                    .addComponent(jButton7))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -476,6 +490,14 @@ public class PnlEditor extends javax.swing.JPanel {
         return true;
     }
     
+    private void checkSemanticErros(){
+        pnlSemantic.println("CHECKING SEMANTIC ERRORS");
+        DyslexiaSemanticErrorVisitor errorVisitor = new DyslexiaSemanticErrorVisitor(this.pnlSemantic);
+        errorVisitor.visit(this.globalParseTree);
+        this.pnlSemantic.printErrors(errorVisitor.errors);
+        pnlSemantic.println("CHECKED SEMANTIC ERRORS");  
+    }
+    
      private void generateTac(ParseTree tree) {
         System.out.println("GENERATING THREE ADDRESS CODE");
         DyslexiaTacVisitor dyslexiaTacVisitor = new DyslexiaTacVisitor(this.frmDislexia);
@@ -500,7 +522,7 @@ public class PnlEditor extends javax.swing.JPanel {
         } else {
             //annotatedListener(tree);
             evaluate(tree);
-            generateTac(tree);
+            globalParseTree = tree;
         }
         System.out.println("Code Interpreted.");
         //annotatedListenerTac(tree);
@@ -855,6 +877,11 @@ public class PnlEditor extends javax.swing.JPanel {
         new FrmRefactor(this);
     }//GEN-LAST:event_jButton6ActionPerformed
 
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        generateTac(this.globalParseTree);
+    }//GEN-LAST:event_jButton7ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -863,5 +890,6 @@ public class PnlEditor extends javax.swing.JPanel {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     // End of variables declaration//GEN-END:variables
 }
