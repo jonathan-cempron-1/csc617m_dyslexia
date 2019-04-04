@@ -98,6 +98,10 @@ public class Symbol {
         return ret;
     }
     
+    public String getMultiValue(int index){
+        return value.get(index);
+    }
+    
     public void setMultiValue(String[] multiValues){
         this.value = new LinkedList<String>();
         for(int i = 0; i < multiValues.length; i++)

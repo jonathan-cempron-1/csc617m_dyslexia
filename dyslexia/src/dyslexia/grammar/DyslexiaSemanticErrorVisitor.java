@@ -803,8 +803,17 @@ public class DyslexiaSemanticErrorVisitor extends DyslexiaBaseVisitor<ArrayList<
             //System.out.println(" INDEX: " + leftHandSide.get(1).getStringValue());
             //System.out.println(" LINE OF CODE: " + ctx.getText());
             Value indexValue = leftHandSide.get(1);
-            
-            int index = Integer.valueOf(leftHandSide.get(1).getStringValue());
+            System.out.println( " LEFTHANDSIDE.GET(1): " + leftHandSide.get(1).toString());
+            if ( "index".equals(indexValue.getType()) ){
+                // If it is local
+                Symbol indexReference = symbolTable.findSymbol(indexValue.getStringValue(), this.currentClassName, this.functionCalls.peek());
+                if ( indexReference == null ) // If it is global
+                    indexReference = symbolTable.findSymbol(indexValue.getStringValue(), this.currentClassName, "");
+                System.out.println(" INDEX REFERENCE: " + indexReference.toString());
+                indexValue = new Value(indexReference.getType(), "0");
+            }
+            System.out.println(" INDEX: " + indexValue.toString());
+            int index = Integer.valueOf(indexValue.getStringValue());
             String[] strings = new String[symbol.getMultiValue().length];
             
             for (int i = 0; i < strings.length;  i++ ) {

@@ -497,15 +497,36 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
         pnlDebugger.println("Old Symbol: " + symbol.toString());
         if ( leftHandSide.size() > 1 ) { 
             // leftHandSide is an array and has index
-            int index = leftHandSide.get(1).getIntValue();
-            String[] strings = new String[symbol.getMultiValue().length];
-            for (int i = 0; i < strings.length;  i++ ) {
-                if ( i == index )
-                    strings[i] = expression.getStringValue();
-                else
-                    strings[i] = symbol.getMultiValue()[i];
+            Value indexValue = leftHandSide.get(1);
+            System.out.println( " LEFTHANDSIDE.GET(1): " + leftHandSide.get(1).toString());
+            if ( "index".equals(indexValue.getType()) ){
+                // If it is local
+                Symbol indexReference = symbolTable.findSymbol(indexValue.getStringValue(), this.currentClassName, this.functionCalls.peek());
+                if ( indexReference == null ) // If it is global
+                    indexReference = symbolTable.findSymbol(indexValue.getStringValue(), this.currentClassName, "");
+                System.out.println(" INDEX REFERENCE: " + indexReference.toString());
+                indexValue = new Value(indexReference.getType(), indexReference.getSingleValue());
             }
+            System.out.println(" INDEX: " + indexValue.toString());
+            int index = Integer.valueOf(indexValue.getStringValue());
             
+            
+            String[] strings = new String[symbol.getMultiValue().length];
+            if ( variableReference == null ) {
+                for (int i = 0; i < strings.length;  i++ ) {
+                    if ( i == index )
+                        strings[i] = expression.getStringValue();
+                    else
+                        strings[i] = symbol.getMultiValue()[i];
+                }
+            } else {
+                for (int i = 0; i < strings.length;  i++ ) {
+                    if ( i == index )
+                        strings[i] = variableReference.getSingleValue();
+                    else
+                        strings[i] = symbol.getMultiValue()[i];
+                }
+            }
             newSymbol = new Symbol(symbol.getName(), symbol.getType(), strings, symbol.getClassInstance(), symbol.getFunctionInstance());
         } else {
             // leftHandSide only contains 1 expresion
@@ -753,6 +774,7 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
     
     // arrayAccess_lfno_primary
     @Override public ArrayList<Value> visitArrayAccess_lfno_primary(DyslexiaParser.ArrayAccess_lfno_primaryContext ctx) { 
+        System.out.println(" VISITING ARRAY ACCESS LF NO PRIMARY");
         ArrayList<Value> values = new ArrayList<>();
         Value variableName = visit(ctx.expressionName()).get(0);
         Value expression = visit(ctx.expression(0)).get(0);
@@ -771,9 +793,18 @@ public class DyslexiaEvaluator extends DyslexiaBaseVisitor<ArrayList<Value>>{
             else
                 variable = globalSymbol;
             
+            System.out.println("expression: " + expression.toString());
+            System.out.println("variable: " + variable.toString());
+            System.out.println("sybmol: " + symbol.toString());
+            System.out.println(" CODE: " + ctx.getText());
+            printSymbolTable();
             int index = Integer.parseInt(variable.getSingleValue());
-            values.add( new Value(symbol.getType(), symbol.getMultiValue()[index]));
+            values.add( new Value(symbol.getType(), String.valueOf(symbol.getMultiValue()[index])));
+            //String singleValue = symbol.getMultiValue(index);
+            //values.add( new Value(symbol.getType(), symbol.getMultiValue(index)));
+            //values.add( new Value(symbol.getType(), singleValue));
         } else values.add( new Value(symbol.getType(), symbol.getMultiValue()[expression.getIntValue()]));
+        System.out.println(" VISITED ARRAY ACCESS LF NO PRIMARY");
         return values; 
     }
    
