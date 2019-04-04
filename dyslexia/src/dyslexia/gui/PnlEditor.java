@@ -85,6 +85,37 @@ public class PnlEditor extends javax.swing.JPanel {
         this.add(sp, BorderLayout.CENTER);
     }
     
+    private String cleanLineFor(String line){
+        
+            line = line.replaceAll(";", " ; ");
+            line = line.replaceAll("\\{", " ");
+            line = line.replaceAll("}", " ");
+            line = line.replaceAll("\\[", " ");
+            line = line.replaceAll("]", " ");
+            line = line.replaceAll("\\(", " ");
+            line = line.replaceAll("\\)", " ");
+            line = line.replaceAll("\"", " ");
+            line = line.replaceAll("\'", " ");
+            line = line.replaceAll("\\+", " + ");
+            line = line.replaceAll("=", " = ");
+            line = line.replaceAll("-", " - ");
+            line = line.replaceAll("\\*", " * ");
+            line = line.replaceAll("/", " / ");
+            line = line.replaceAll("\\.", " ");
+            line = line.replaceAll(",", " ");
+            line = line.replaceAll("<", " < ");
+            line = line.replaceAll(">", " > ");
+            line = line.replaceAll("!", " ! ");
+            line = line.replaceAll("%", " % ");
+            line = line.replaceAll("&", " & ");
+            line = line.replaceAll("\\|", " | ");
+            line = line.replaceAll("\\?", " ");
+            line = line.replaceAll("\\^", " ^ ");
+            line = line.replaceAll("rof", " ");
+            line = line.replaceAll("\\s+", " ");
+            return line;
+    }
+    
         private String cleanLine(String line){
         
             line = line.replaceAll(";", " ");
@@ -96,7 +127,7 @@ public class PnlEditor extends javax.swing.JPanel {
             line = line.replaceAll("\\)", " ");
             line = line.replaceAll("\"", " ");
             line = line.replaceAll("\'", " ");
-            line = line.replaceAll("\\+", "");
+            line = line.replaceAll("\\+", " ");
             line = line.replaceAll("=", " ");
             line = line.replaceAll("-", " ");
             line = line.replaceAll("\\*", " ");
@@ -110,7 +141,7 @@ public class PnlEditor extends javax.swing.JPanel {
             line = line.replaceAll("&", " ");
             line = line.replaceAll("\\|", " ");
             line = line.replaceAll("\\?", " ");
-            line = line.replaceAll("^", " ");
+            line = line.replaceAll("\\^", " ");
             line = line.replaceAll("\\s+", " ");
             return line;
     }
@@ -126,7 +157,7 @@ public class PnlEditor extends javax.swing.JPanel {
             line = line.replaceAll("\\)", " ");
             line = line.replaceAll("\"", " ");
             line = line.replaceAll("\'", " ");
-            line = line.replaceAll("\\+", "");
+            line = line.replaceAll("\\+", " ");
             line = line.replaceAll("=", " ");
             line = line.replaceAll("-", " ");
             line = line.replaceAll("\\*", " ");
@@ -140,7 +171,7 @@ public class PnlEditor extends javax.swing.JPanel {
             line = line.replaceAll("&", " ");
             line = line.replaceAll("\\|", " ");
             line = line.replaceAll("\\?", " ");
-            line = line.replaceAll("^", " ");
+            line = line.replaceAll("\\^", " ");
             line = line.replaceAll("\\s+", " ");
             return line;
     }        
@@ -257,6 +288,7 @@ public class PnlEditor extends javax.swing.JPanel {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
 
         jButton1.setText("compile and run");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -286,6 +318,13 @@ public class PnlEditor extends javax.swing.JPanel {
             }
         });
 
+        jButton5.setText("loop unroll optimize");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -299,7 +338,9 @@ public class PnlEditor extends javax.swing.JPanel {
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addContainerGap(149, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton5)
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -309,7 +350,8 @@ public class PnlEditor extends javax.swing.JPanel {
                     .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(jButton3)
-                    .addComponent(jButton4))
+                    .addComponent(jButton4)
+                    .addComponent(jButton5))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -660,7 +702,7 @@ public class PnlEditor extends javax.swing.JPanel {
             rawCodeLl.set(loopInvLines.get(i), "\t\t\t\t//transferred out loop");
         
         // insert invariant lines top of loop
-        for(int i = 0; i < loopInvLines.size(); i++)
+        for(int i = loopInvLines.size()-1; i >= 0; i--)
             rawCodeLl.add(flStart, invLines.get(i));
         
         System.out.println("invariant lines:");
@@ -675,11 +717,126 @@ public class PnlEditor extends javax.swing.JPanel {
                 
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        String rawCode = jTextPane1.getText();
+        String[] rawCodeArr = rawCode.split("\n");
+        
+        // rawcode linked list copy
+        LinkedList<String> rawCodeLl = new LinkedList<String>();
+        for(int i = 0; i < rawCodeArr.length; i++)
+            rawCodeLl.add(rawCodeArr[i]);
+        
+        int flStart = -1;
+        int flEnd = -1;
+        // find for loop start
+        for(int i = 0; i < rawCodeArr.length; i++){
+            String line = rawCodeArr[i];
+            line = cleanLineSaveScope(line);
+            String[] lineArr = line.split("\\s+");
+            for(int j = 0; j < lineArr.length; j++){
+                if(lineArr[j].equals("rof"))
+                    flStart = i;
+            }
+        }
+        // find for loop end
+        if(flStart != -1){
+            LinkedList<String> scopeStack = new LinkedList<String>();
+            for(int i = flStart; i < rawCodeArr.length; i++){
+                String line = rawCodeArr[i];
+                line = cleanLineSaveScope(line);
+                String[] lineArr = line.split("\\s+");
+                if(hasOpenCurly(lineArr))
+                    scopeStack.push("{");
+                if(hasCloseCurly(lineArr))
+                    scopeStack.pop();
+                if(scopeStack.isEmpty()){
+                    flEnd = i;
+                    break;
+                }
+            }
+        }
+        System.out.println("for detected start "+flStart);
+        System.out.println("for detected end "+flEnd);
+        
+        String loopInit = "";
+        String loopCond = "";
+        String loopUpdate = "";
+        // get init cond and update
+        if(flStart != -1 && flEnd != -1){
+            String[] temp = cleanLineFor(rawCodeArr[flStart]).split(";");
+            loopInit = temp[0];
+            loopCond = temp[1];
+            loopUpdate = temp[2];
+        }
+        System.out.println("looping init "+loopInit);;
+        System.out.println("looping cond "+loopCond);
+        System.out.println("looping update "+loopUpdate);
+        
+        String loopingVar = "";
+        String loopingVal = "";
+        // get loop var and val
+        if(flStart != -1 && flEnd != -1){
+            String[] loopInitArr = loopInit.replaceAll("\\s+","").replaceAll("\\s+","").split("=");
+            loopingVar = loopInitArr[0];
+            loopingVal = loopInitArr[1];
+        }
+        System.out.println("looping var "+loopingVar);
+        System.out.println("looping val "+loopingVal);
+
+        String loopComp = "";
+        String loopUB = "";
+        // get condition comparator and upper bound
+        if(flStart != -1 && flEnd != -1){
+            String[] loopCondArr = loopCond.replaceAll(loopingVar,"").replaceAll("\\s+"," ").split(" ");
+            loopComp = loopCondArr[1];
+            loopUB = loopCondArr[2];
+        }
+        System.out.println("loop comp "+loopComp);
+        System.out.println("loop ub "+loopUB);
+        
+        int ub = -1;
+        int lb = -1;
+        // get upperBound and lower bound
+        if(flStart != -1 && flEnd != -1){
+            if(loopComp.equals("<")){
+                lb = Integer.parseInt(loopingVal);
+                ub = Integer.parseInt(loopUB);
+            }
+        }
+        System.out.println("detected iteration lower bound "+lb);
+        System.out.println("detected iteration upper bound "+ub);
+        
+        // remove the original loop
+        for(int i = flStart; i < flEnd; i++){
+            rawCodeLl.set(i, "\t\t\t\t// original loop removed");
+        }
+        
+        // repeat loop
+        for(int i = lb; i < ub; i++){
+            rawCodeLl.add(flStart, "\t\t\t\t"+loopUpdate);
+            for(int j = flEnd-1; j >= flStart+1; j--){
+                rawCodeLl.add(flStart, rawCodeArr[j]);
+            }
+        }
+        rawCodeLl.add(flStart, "\t\t\t\t"+loopInit);
+        int looplen = ub-lb;
+        rawCodeLl.add(flStart, "\t\t\t\t// loop unrolled by "+looplen+" via ub:"+ub+" lb:"+lb);
+        
+        // set contents
+        String newContent = "";
+        for(int i =0; i < rawCodeLl.size(); i++)
+            newContent = newContent + rawCodeLl.get(i) + "\n";
+        
+        jTextPane1.setText(newContent);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     // End of variables declaration//GEN-END:variables
 }
